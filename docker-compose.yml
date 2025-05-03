@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql8
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: eccube
+      MYSQL_USER: eccube
+      MYSQL_PASSWORD: eccube
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-p${MYSQL_ROOT_PASSWORD}",
+        ]
+      timeout: 20s
+      retries: 5
+
+  web:
+    build: . # カレントディレクトリの Dockerfile を使用
+    container_name: php8
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/var/www/html
+      - ./php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - db
+    environment:
+      PHP_INI_SCAN_DIR: /usr/local/etc/php/conf.d
+      ECCUBE_DATABASE_URL: "mysql://eccube:eccube@db:3306/eccube?serverVersion=8.0"
+      ECCUBE_ADMIN_USER: "admin"
+      ECCUBE_ADMIN_PASS: "password"
+    #entrypoint: /usr/local/bin/entrypoint.sh
+    entrypoint: ["apache2-foreground"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  db_data:

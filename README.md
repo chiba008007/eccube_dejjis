@@ -12,3 +12,25 @@
 - PW : password
 
 ### Docker Desktop、MySQL 8.0、PHP 8.0、EC-CUBE 4.2 での開発環境構築手順
+
+### フォルダ・ファイル構成
+
+eccube
+┣ html ← eccube のファイルを設置
+┣ docker-compose.yml
+┣ Dockerfile
+┣ entrypoint.sh
+┣ init.sql
+┗ php.ini
+
+### 手順
+
+1. まず、Docker Desktop がインストールされている必要があります。まだインストールされていない場合は、以下の公式サイトからダウンロードしてインストールしてください。
+   ※ 今回は git から取得できるので不要
+   [Docker Desktop for Mac and Windows](https://www.docker.com/products/docker-desktop/)
+
+2. Docker Compose の設定ファイル作成 (docker-compose.yml)
+
+プロジェクトのルートディレクトリに docker-compose.yml というファイルを作成し、以下の内容を記述します。
+
+- コミットファイル

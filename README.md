@@ -30,8 +30,7 @@ eccube<br>
    [Docker Desktop for Mac and Windows](https://www.docker.com/products/docker-desktop/)
 
 2. Docker Compose の設定ファイル作成 (docker-compose.yml)
-
-プロジェクトのルートディレクトリに docker-compose.yml というファイルを作成し、以下の内容を記述します。
+   プロジェクトのルートディレクトリに docker-compose.yml というファイルを作成し、以下の内容を記述します。
 
 - 取得されるファイルに含まれます
 

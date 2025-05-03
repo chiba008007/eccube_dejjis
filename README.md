@@ -16,12 +16,12 @@
 ### フォルダ・ファイル構成
 
 eccube
-┣ html ← eccube のファイルを設置
-┣ docker-compose.yml
-┣ Dockerfile
-┣ entrypoint.sh
-┣ init.sql
-┗ php.ini
+┣ html ← eccube のファイルを設置<br>
+┣ docker-compose.yml<br>
+┣ Dockerfile<br>
+┣ entrypoint.sh<br>
+┣ init.sql<br>
+┗ php.ini<br>
 
 ### 手順
 

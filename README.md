@@ -15,7 +15,7 @@
 
 ### フォルダ・ファイル構成
 
-eccube
+eccube<br>
 ┣ html ← eccube のファイルを設置<br>
 ┣ docker-compose.yml<br>
 ┣ Dockerfile<br>

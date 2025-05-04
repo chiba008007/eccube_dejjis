@@ -183,10 +183,6 @@ docker-compose up -d
 
 ```
 
-はい、承知いたしました。マークダウン形式で表示できるように成型します。
-
-Markdown
-
 ## トラブルシューティング (Troubleshooting)
 
 - **エラー:** `An exception occurred while executing a query: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'eccube.dtb_base_info' doesn't exist`

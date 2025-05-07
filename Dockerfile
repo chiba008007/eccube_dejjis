@@ -43,6 +43,16 @@ ENV PHP_INI_SCAN_DIR /usr/local/etc/php/conf.d
 # 作業ディレクトリを設定
 WORKDIR /var/www/html
 
+# アプリケーションソースをコピー
+COPY . .
+
+# Composer install を実行 (www-data ユーザーで)
+RUN chown -R www-data:www-data /var/www/html
+USER www-data
+RUN composer install --no-dev --optimize-autoloader
+USER root
+
+
 COPY init.sql /docker-entrypoint-initdb.d/
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh

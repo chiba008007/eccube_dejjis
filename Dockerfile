@@ -21,6 +21,10 @@ RUN docker-php-ext-install intl
 # PHP PDO および MySQL 拡張機能を有効にする
 RUN docker-php-ext-install pdo pdo_mysql
 
+# Xdebug 拡張機能をインストール
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
+
 # Composer をダウンロードしてインストール
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -36,6 +40,10 @@ RUN a2enmod rewrite
 
 # PHP の設定をコピー (もし php.ini をホスト側で管理している場合)
 COPY ./php.ini /usr/local/etc/php/php.ini
+
+# Xdebug の設定ファイルを作成 (docker-compose.yml からマウントするためここでは空でOK)
+RUN mkdir -p /usr/local/etc/php/conf.d
+RUN touch /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # PHP の設定ディレクトリを指定
 ENV PHP_INI_SCAN_DIR /usr/local/etc/php/conf.d
@@ -60,3 +68,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 EXPOSE 80
+EXPOSE 9003

@@ -43,8 +43,8 @@ ENV PHP_INI_SCAN_DIR /usr/local/etc/php/conf.d
 # 作業ディレクトリを設定
 WORKDIR /var/www/html
 
-# アプリケーションソースをコピー
-COPY . .
+# html ディレクトリの中身を /var/www/html にコピー
+COPY ./html/ . 
 
 # Composer install を実行 (www-data ユーザーで)
 RUN chown -R www-data:www-data /var/www/html

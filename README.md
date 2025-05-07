@@ -275,3 +275,16 @@ docker-compose up -d
   - **Visual Studio Code (VS Code) を使用する場合:** ファイルを開き、右下の行末表示をクリックして「LF」を選択し、保存します。
   - **Notepad++ を使用する場合:** ファイルを開き、「編集」→「行末の変換」→「Unix (LF)」を選択し、保存します。
   - **Git Bash (Windows/macOS/Linux) を使用する場合:** ターミナルで `dos2unix <ファイル名>` コマンドを実行します。
+
+### .envファイルについて
+
+```
+# この状態を確認
+APP_ENV=prod
+APP_DEBUG=0
+
+
+# mysqlを使うように id:root pw:rootにしてある
+DATABASE_URL=mysql://root:root@mysql8:3306/eccube?serverVersion=8.0
+
+```

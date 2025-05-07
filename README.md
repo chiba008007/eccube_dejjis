@@ -14,6 +14,7 @@
 ### Docker Desktop、MySQL 8.0、PHP 8.0、EC-CUBE 4.2 での開発環境構築手順
 
 ### フォルダ・ファイル構成
+- wslに作成(windowsに作ると重いので)
 
 eccube<br>
 ┣ html ← eccube のファイルを設置<br>
@@ -22,6 +23,8 @@ eccube<br>
 ┣ entrypoint.sh<br>
 ┣ init.sql<br>
 ┗ php.ini<br>
+
+
 
 ### 手順
 
@@ -95,7 +98,7 @@ cebb1a322dd7   mysql:8.0           "docker-entrypoint.s…"   12 seconds ago   U
     mysql -u root -p${MYSQL_ROOT_PASSWORD}
     ```
 
-    2. スキーマの作成を行う
+    2. スキーマの作成を行う(php8のコンテナで実施)
 
     ```
     php bin/console doctrine:schema:create --env=prod -n

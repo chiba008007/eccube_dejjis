@@ -22,6 +22,7 @@ eccube<br>
 ┣ Dockerfile<br>
 ┣ entrypoint.sh<br>
 ┣ init.sql<br>
+┣ .dockerignore<br>
 ┗ php.ini<br>
 
 

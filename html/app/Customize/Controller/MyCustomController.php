@@ -14,7 +14,6 @@ class MyCustomController extends AbstractController
     public function index(): Response
     {
 
-        
         return $this->render('controller/my_custom/index.html.twig', [
             'controller_name' => 'MyCustomController',
         ]);

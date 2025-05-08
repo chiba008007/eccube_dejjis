@@ -304,4 +304,21 @@ root@411c705523f2:/var/www/html# php bin/console make:controller "\\Customize\\C
  created: templates/controller/my_custom/index.html.twig
 ```
 
-
+## プロジェクトに PHP CS Fixer を追加する
+```
+composer require --dev friendsofphp/php-cs-fixer
+touch .php-cs-fixer.php
+・VSCode に拡張機能を入れる
+```
+- VSCode の設定をする
+  - VSCode の Ctrl + Shift + P を押す
+  - 「Preferences: Open Settings (JSON)」を選ぶ
+  - settings.jsonの修正
+```
+{
+  "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
+  "php-cs-fixer.onsave": true,
+  "php-cs-fixer.rules": "@PSR12",
+  "php-cs-fixer.autoFixBySave": true
+}
+```

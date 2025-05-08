@@ -289,3 +289,19 @@ APP_DEBUG=0
 DATABASE_URL=mysql://root:root@mysql8:3306/eccube?serverVersion=8.0
 
 ```
+
+
+
+
+- Customizeフォルダにコントローラー作成コマンド
+``
+root@411c705523f2:/var/www/html# php bin/console make:controller "\\Customize\\Controller\\MyCustomController"
+``
+
+- 結果
+```
+ created: app/Customize/Controller/MyCustomController.php
+ created: templates/controller/my_custom/index.html.twig
+```
+
+

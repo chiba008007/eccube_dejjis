@@ -16,9 +16,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libxml2-dev \
     --no-install-recommends \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
+    && docker-php-ext-install -j$(nproc) gd dom
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libmagickwand-dev \
@@ -71,7 +72,10 @@ COPY ./html/ .
 # Composer install を実行 (www-data ユーザーで)
 RUN chown -R www-data:www-data /var/www/html
 USER www-data
-RUN composer install --no-dev --optimize-autoloader
+# 本番の時は下記を利用したほうが良いかと・・・
+# RUN composer install --no-dev --optimize-autoloader
+# 開発の時にcomposer installが失敗していたので、対応
+RUN composer install
 USER root
 
 

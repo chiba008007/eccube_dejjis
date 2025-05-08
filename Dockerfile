@@ -12,6 +12,20 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    --no-install-recommends \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libmagickwand-dev \
+    --no-install-recommends \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick
+
 # PHP ZIP 拡張機能を有効にする
 RUN docker-php-ext-install zip
 

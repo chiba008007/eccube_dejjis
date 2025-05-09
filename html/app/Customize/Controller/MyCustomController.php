@@ -2,6 +2,9 @@
 
 namespace Customize\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+use Eccube\Entity\BaseInfo;
+use Customize\Form\Type\BaseInfoType;
 use Eccube\Repository\BaseInfoRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,15 +28,11 @@ class MyCustomController extends AbstractController
      */
     public function index(ProductRepository $product_repository, PaginatorInterface $paginator)
     {
-        $products = $product_repository->getQueryBuilderBySearchDataForAdmin(['id' => 3]);
-        $pagination = $paginator->paginate(
-            $products,
-            1,
-            1
-        );
+        $products = $product_repository->findAll();
+
         return [
             'controller_name' => 'MyCustomController12',
-            'products' => $pagination
+            'products' => $products
         ];
     }
     /**
@@ -65,5 +64,47 @@ class MyCustomController extends AbstractController
     public function none()
     {
         return $this->redirectToRoute("customize_admin_sample");
+    }
+    /**
+     * @Method("GET")
+     * @Route("%eccube_admin_route%/baseInfo", name="customize_admin_baseinfo")
+     * @template("/controller/my_custom/form.html.twig")
+     */
+    public function baseinfo(Request $request)
+    {
+        // 既存のBaseInfoエンティティを取得
+        $baseInfo = $this->getDoctrine()->getRepository(BaseInfo::class)->find(1);
+
+        // フォームを作成
+        $form = $this->createForm(BaseInfoType::class, $baseInfo);
+
+        // フォームが送信されたかを確認
+        $form->handleRequest($request);
+
+        return [
+            "controller_name" => "baseInfo Controller",
+            "form" => $form->createView()
+        ];
+    }
+    /**
+     * @Method("POST")
+     * @Route("%eccube_admin_route%/baseInfo", name="customize_admin_baseinfo_set")
+     */
+    public function baseinfoSet(Request $request)
+    {
+        $baseInfo = $this->getDoctrine()->getRepository(BaseInfo::class)->find(1);
+
+        // フォームを作成
+        $form = $this->createForm(BaseInfoType::class, $baseInfo);
+
+        // フォームが送信されたかを確認
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('success', 'BaseInfoが更新されました');
+        } else {
+            $this->addFlash('error', 'BaseInfoが更新失敗しました');
+        }
+        return $this->redirectToRoute('customize_admin_baseinfo');
     }
 }

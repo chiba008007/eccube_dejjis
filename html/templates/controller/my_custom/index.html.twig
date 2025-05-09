@@ -16,10 +16,14 @@
         <li>Your controller at <code><a href="{{ '/var/www/html/app/Customize/Controller/MyCustomController.php'|file_link(0) }}">app/Customize/Controller/MyCustomController.php</a></code></li>
         <li>Your template at <code><a href="{{ '/var/www/html/templates/controller/my_custom/index.html.twig'|file_link(0) }}">templates/controller/my_custom/index.html.twig</a></code></li>
     </ul>
+    
     <ul>
     {% for product in products %}
-        <li>{{ product.name }}<br />{{ product.description_detail }}</li>
-        <h3>{{ product.makerName }}</h3>
+        <li>
+            {{ product.name }}<br />
+            {{ product.description_detail }}<br />
+            <b>maker_name: {{ product.makerName }}</b>
+        </li>
     {% endfor %}
     </ul>
 </div>

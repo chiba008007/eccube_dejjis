@@ -27,6 +27,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && pecl install imagick \
     && docker-php-ext-enable imagick
 
+RUN apt-get update && apt-get install -y \
+    net-tools \
+    lsof
+    
 # PHP ZIP 拡張機能を有効にする
 RUN docker-php-ext-install zip
 

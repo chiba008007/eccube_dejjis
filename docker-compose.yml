@@ -33,9 +33,11 @@ services:
   web:
     build: . # カレントディレクトリの Dockerfile を使用
     container_name: php8
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
     ports:
       - "80:80"
-      - "9003:9003"
+      - "9006:9004"
     volumes:
       - ./html:/var/www/html
       - ./php.ini:/usr/local/etc/php/php.ini
@@ -49,7 +51,7 @@ services:
       ECCUBE_ADMIN_PASS: "password"
       PHP_IDE_CONFIG: "serverName=docker"
       XDEBUG_MODE: debug
-      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9000 remote_enable=1 remote_autostart=1"
+      XDEBUG_CONFIG: "client_host=host.docker.internal client_port=9004"
     #entrypoint: /usr/local/bin/entrypoint.sh
     entrypoint: ["apache2-foreground"]
     healthcheck:

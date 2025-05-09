@@ -10,7 +10,7 @@
 
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
-
+    
     This friendly message is coming from:
     <ul>
         <li>Your controller at <code><a href="{{ '/var/www/html/app/Customize/Controller/MyCustomController.php'|file_link(0) }}">app/Customize/Controller/MyCustomController.php</a></code></li>
@@ -19,6 +19,7 @@
     <ul>
     {% for product in products %}
         <li>{{ product.name }}<br />{{ product.description_detail }}</li>
+        <h3>{{ product.makerName }}</h3>
     {% endfor %}
     </ul>
 </div>

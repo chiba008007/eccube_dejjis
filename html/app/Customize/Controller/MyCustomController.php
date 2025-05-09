@@ -25,7 +25,7 @@ class MyCustomController extends AbstractController
      */
     public function index(ProductRepository $product_repository, PaginatorInterface $paginator)
     {
-        $products = $product_repository->getQueryBuilderBySearchDataForAdmin(['id' => 0]);
+        $products = $product_repository->getQueryBuilderBySearchDataForAdmin(['id' => 3]);
         $pagination = $paginator->paginate(
             $products,
             1,

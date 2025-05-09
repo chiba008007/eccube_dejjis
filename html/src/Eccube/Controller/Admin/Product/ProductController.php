@@ -154,8 +154,7 @@ class ProductController extends AbstractController
      */
     public function index(Request $request, PaginatorInterface $paginator, $page_no = null)
     {
-        $builder = $this->formFactory
-            ->createBuilder(SearchProductType::class);
+        $builder = $this->formFactory->createBuilder(SearchProductType::class);
 
         $event = new EventArgs(
             [
@@ -174,8 +173,10 @@ class ProductController extends AbstractController
          * - デフォルト値
          * また, セッションに保存する際は mtb_page_maxと照合し, 一致した場合のみ保存する.
          **/
-        $page_count = $this->session->get('eccube.admin.product.search.page_count',
-            $this->eccubeConfig->get('eccube_default_page_count'));
+        $page_count = $this->session->get(
+            'eccube.admin.product.search.page_count',
+            $this->eccubeConfig->get('eccube_default_page_count')
+        );
 
         $page_count_param = (int) $request->get('page_count');
         $pageMaxis = $this->pageMaxRepository->findAll();

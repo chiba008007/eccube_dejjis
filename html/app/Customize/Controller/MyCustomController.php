@@ -29,10 +29,12 @@ class MyCustomController extends AbstractController
     public function index(ProductRepository $product_repository, PaginatorInterface $paginator)
     {
         $products = $product_repository->findAll();
+        $string = "test";
 
         return [
             'controller_name' => 'MyCustomController12',
-            'products' => $products
+            'products' => $products,
+            'string' => $string
         ];
     }
     /**
@@ -42,7 +44,14 @@ class MyCustomController extends AbstractController
      */
     public function testMethod($id, ProductRepository $product_repository)
     {
-        $products = $product_repository->getQueryBuilderBySearchDataForAdmin(['id' => 0]);
+        $searchData = [
+            'name' => 'かき氷',
+            // その他検索条件
+        ];
+        $qb = $product_repository->getQueryBuilderBySearchDataForAdmin([]);
+        $qb->andWhere('p.name LIKE :name')
+            ->setParameter('name', '%' . $searchData['name'] . '%');
+        $products = $qb->getQuery()->getResult();
         return [
             'controller_name' => 'MyCustomController_testMethod',
             'products' => $products

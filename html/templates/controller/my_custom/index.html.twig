@@ -10,7 +10,8 @@
 
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
-    
+    <h3>{{ string|default("nothing") }}</h3>
+    <p>Here is a list of products:</p>
     This friendly message is coming from:
     <ul>
         <li>Your controller at <code><a href="{{ '/var/www/html/app/Customize/Controller/MyCustomController.php'|file_link(0) }}">app/Customize/Controller/MyCustomController.php</a></code></li>

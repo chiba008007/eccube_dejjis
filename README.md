@@ -23,8 +23,13 @@ eccube<br>
 ┣ entrypoint.sh<br>
 ┣ init.sql<br>
 ┣ .dockerignore<br>
+┣ xdebug.ini ← 空にしている<br>
 ┗ php.ini<br>
 
+### xdebugのインストールについて
+- docker-compose.ymlに追記済み
+- php.ini ← xdebugの設定について記載
+- .vscode/launch.json ← xdebugのlaunch
 
 
 ### 手順
@@ -322,3 +327,12 @@ touch .php-cs-fixer.php
   "php-cs-fixer.autoFixBySave": true
 }
 ```
+
+## synfonyのルーティングの確認 ##
+コマンド:`bin/console debug:router`
+
+
+## 資料
+`https://github.com/t-chiba008007/eccube-document`
+ - Update Docker + PHP + Xdebug + VS Code デバッグ環境構築手順書.docx
+ - EC-CUBE 4.2 開発環境構築手順 (Docker Desktop).docx

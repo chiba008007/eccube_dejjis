@@ -41,3 +41,10 @@ doctrine:
             incomplete_order_status_hidden:
                 class: Eccube\Doctrine\Filter\OrderStatusFilter
                 enabled: false
+        mappings:
+            Customize:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/app/Customize/Entity'
+                prefix: 'Customize\Entity'
+                alias: Customize

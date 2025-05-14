@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}新規投稿{% endblock %}
+
+{% block body %}
+    <h1>新規投稿フォーム</h1>
+    {#フラッシュメッセージ表示#}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {# フォームの表示 #}
+    {# form_start()でフォームの開始タグを出力 #}
+    {# form_row()でフォームの各フィールドを出力 #}
+    {# form_end()でフォームの終了タグを出力 #}
+    {# 各フィールドの表示とエラーメッセージ #}
+{{ form_start(form)}}
+{{ form_row(form.name)}}
+
+<div class="form-group">
+{{ form_label(form.comment)}}
+</div>
+<div class="form-group">
+{{ form_widget(form.comment)}}
+</div>
+<div>
+    {% if form.comment.vars.errors | length > 0 %}
+    <div class="invalid-feedback">
+        {% for error in form.comment.vars.errors %}
+            <div>{{ error.message }}</div>
+        {% endfor %}    
+    </div>    
+    {% endif %}
+</div>
+<button class="btn btn-primary">登録</button>
+{{ form_row(form._token) }}
+{{ form_end(form) }}
+{% endblock %}

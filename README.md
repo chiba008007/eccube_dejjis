@@ -157,6 +157,9 @@ touch .php-cs-fixer.php
 `bin/console make:entity`
 - 対話式 → コントローラ名を入力
 
+## migrateファイルの生成と実施
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
 
 
 ## 資料

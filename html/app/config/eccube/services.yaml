@@ -216,3 +216,8 @@ services:
 
     Eccube\EventListener\RateLimiterListener:
         arguments: [ !tagged_locator { tag: 'eccube_rate_limiter' } ]
+    
+    Customize\Validator\UniqueHelloNameValidator:
+        arguments:
+            - '@doctrine.orm.entity_manager'
+        tags: ['validator.constraint_validator']

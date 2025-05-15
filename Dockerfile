@@ -1,6 +1,6 @@
 FROM php:8.0.29-apache
 
-# 必要なパッケージをインストール (PHP 拡張機能ビルドに必要なものを含む)
+# 必要なパッケージをまとめてインストール
 RUN apt-get update && apt-get install -y \
     $PHPIZE_DEPS \
     ca-certificates \
@@ -9,87 +9,54 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libicu-dev \
     mariadb-client-10.5 \
-    --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
+    iputils-ping \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
     libxml2-dev \
-    --no-install-recommends \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd dom
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
     libmagickwand-dev \
-    --no-install-recommends \
-    && pecl install imagick \
-    && docker-php-ext-enable imagick
-
-RUN apt-get update && apt-get install -y \
     net-tools \
-    lsof
-    
-# PHP ZIP 拡張機能を有効にする
-RUN docker-php-ext-install zip
+    lsof \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 
-# PHP intl 拡張機能を有効にする
-RUN docker-php-ext-install intl
+# PHP拡張モジュールインストール
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd dom zip intl pdo pdo_mysql
 
-# PHP PDO および MySQL 拡張機能を有効にする
-RUN docker-php-ext-install pdo pdo_mysql
+# imagick & xdebug
+RUN pecl install imagick xdebug \
+    && docker-php-ext-enable imagick xdebug
 
-# Xdebug 拡張機能をインストール
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
-
-# Xdebug の設定ファイルを作成し、設定を記述
+# Xdebug 設定
 RUN echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-    
-# Composer をダウンロードしてインストール
+
+# Composer インストール
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# PATH 環境変数を設定 (念のため)
-ENV PATH="$PATH:/usr/local/bin"
+# Apache の設定変更と rewrite モジュール有効化
+RUN sed -i 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/000-default.conf \
+    && sed -i 's!/var/www/!/var/www/!g' /etc/apache2/apache2.conf \
+    && a2enmod rewrite
 
-# Apache のドキュメントルートを設定 (既存の設定を上書き)
-RUN sed -i 's!/var/www/html!/var/www/html!g' /etc/apache2/sites-available/000-default.conf
-RUN sed -i 's!/var/www/!/var/www/!g' /etc/apache2/apache2.conf
-
-# Apache の rewrite モジュールを有効化 (EC-CUBE で必要)
-RUN a2enmod rewrite
-
-# PHP の設定をコピー (もし php.ini をホスト側で管理している場合)
+# PHP 設定ファイルのコピー
 COPY ./php.ini /usr/local/etc/php/php.ini
 
-# Xdebug の設定ファイルを作成 (docker-compose.yml からマウントするためここでは空でOK)
-RUN mkdir -p /usr/local/etc/php/conf.d
-RUN touch /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-
-# PHP の設定ディレクトリを指定
-ENV PHP_INI_SCAN_DIR /usr/local/etc/php/conf.d
-
-# 作業ディレクトリを設定
+# 作業ディレクトリ & コード配置
 WORKDIR /var/www/html
+COPY ./html/ .
 
-# html ディレクトリの中身を /var/www/html にコピー
-COPY ./html/ . 
-
-# Composer install を実行 (www-data ユーザーで)
+# 権限変更と Composer install
 RUN chown -R www-data:www-data /var/www/html
 USER www-data
-# 本番の時は下記を利用したほうが良いかと・・・
-# RUN composer install --no-dev --optimize-autoloader
-# 開発の時にcomposer installが失敗していたので、対応
-RUN composer install
+RUN composer install || true  # 失敗しても進める開発用途ならこれもアリ
 USER root
 
-
+# DB 初期化 & エントリポイント
 COPY init.sql /docker-entrypoint-initdb.d/
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh

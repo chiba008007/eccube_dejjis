@@ -44,6 +44,7 @@ class MyCustomController extends AbstractController
      */
     public function testMethod($id, ProductRepository $product_repository)
     {
+
         $searchData = [
             'name' => 'かき氷',
             // その他検索条件
@@ -56,6 +57,7 @@ class MyCustomController extends AbstractController
             'controller_name' => 'MyCustomController_testMethod',
             'products' => $products
         ];
+
     }
     /**
      * @Method("GET")

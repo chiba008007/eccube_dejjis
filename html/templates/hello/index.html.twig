@@ -10,12 +10,21 @@
 
 <div class="example-wrapper">
     <h1>Hello {{ controller_name }}! ✅</h1>
-    <ul>
+    <table border=1>
+        <tr>
+            <th>ID</th>
+            <th>名前</th>
+            <th>操作</th>
+        </tr>
     {% for hello in hellos %}
-        <li>
-            <strong>{{ hello.name }}</strong>:
-        </li>
+        <tr> 
+            <td>{{ hello.id }}</td> 
+            <td>{{ hello.name }}</td>
+            <td>
+                <a href="{{ path('hello_edit', {'id': hello.id}) }}">編集</a>
+            </td>
+        </tr>
     {% endfor %}
-    </ul>
+    </table>
 </div>
 {% endblock %}

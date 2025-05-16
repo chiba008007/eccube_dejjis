@@ -76,6 +76,8 @@ services:
     Customize\Controller\:
         resource: "../../../app/Customize/Controller"
         tags: ["controller.service_arguments"]
+        bind:
+            $logger: "@monolog.logger.front"
     twig.extension.stringloader:
         class: Twig\Extension\StringLoaderExtension
         tags: ["twig.extension"]
@@ -198,6 +200,3 @@ services:
     Customize\Validator\StartBeforeEndValidator:
         tags:
             - { name: "validator.constraint_validator" }
-    Customize\Controller\HelloController:
-        arguments:
-            $logger: "@monolog.logger.front"

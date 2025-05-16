@@ -8,6 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Customize\Entity\Hello;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class HelloType extends AbstractType
 {
@@ -29,7 +32,33 @@ class HelloType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-        ;
+            ->add('startDate', DateType::class, [
+                'widget' => 'single_text', // input type=dateにする
+                'label' => '開始日',
+                'required' => false
+            ])
+            ->add('endDate', DateType::class, [
+                'widget' => 'single_text', // input type=dateにする
+                'label' => '終了日',
+                'required' => false
+            ])
+            ->add('image', FileType::class, [
+                'label' => '画像アップロード',
+                'required' => false,
+                'mapped' => false,
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => '有効な画像ファイルを選んでください'
+                    ])
+                ]
+            ]);
+
     }
 
     // フォーム全体の基本設定を指定

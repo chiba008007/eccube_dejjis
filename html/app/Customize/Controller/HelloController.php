@@ -11,20 +11,36 @@ use Doctrine\ORM\EntityManagerInterface;
 use Customize\Entity\Hello;
 use Customize\Form\HelloType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Psr\Log\LoggerInterface;
 
 class HelloController extends AbstractController
 {
+    private $em;
+    private $logger;
+    public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
+    {
+
+        $this->em = $em;
+        $this->logger = $logger;
+    }
     /**
      * @Route("/hello/new", name="hello_new", methods={"GET","POST"})
      */
-    public function new(Request $request, EntitymanagerInterface $em): Response
+    public function new(Request $request): Response
     {
         $hello = new Hello();
         $form = $this->createForm(HelloType::class, $hello);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($hello);
-            $em->flush();
+            $file = $form['image']->getData();
+            if ($file) {
+                $originalExtension = $file->getClientOriginalExtension();
+                $filename = uniqid().".".$originalExtension;
+                $file->move($this->getParameter("eccube_save_image_dir"), $filename);
+                $hello->setImagePath("upload/save_image/".$filename);
+            }
+            $this->em->persist($hello);
+            $this->em->flush();
             $this->addFlash("success", "データが登録されました");
             return $this->redirectToRoute('hello_new');
         }
@@ -37,16 +53,16 @@ class HelloController extends AbstractController
      * @Route("/hello/edit/{id}", name="hello_edit", methods={"GET","POST"})
      * @template("/hello/edit.html.twig")
      */
-    public function edit($id, Request $request, EntityManagerInterface $em)
+    public function edit($id, Request $request)
     {
-        $hello = $em->getRepository(Hello::class)->find($id);
+        $hello = $this->em->getRepository(Hello::class)->find($id);
         if (!$hello) {
             throw $this->createNotFoundException('データが見つかりません。');
         }
         $form = $this->createForm(HelloType::class, $hello);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
+            $this->em->flush();
             $this->addFlash("success", "データが更新されました");
             return $this->redirectToRoute('app_hello');
         }
@@ -61,6 +77,8 @@ class HelloController extends AbstractController
      */
     public function index(HelloRepository $helloRepository)
     {
+        $this->logger->info("indexページのデバックログです");
+
         $hellos = $helloRepository->findAll();
         return [
             'controller_name' => 'HelloController',

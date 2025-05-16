@@ -1,2 +1,9 @@
 monolog:
-    channels: ['front', 'admin']
+    channels: ["front", "admin"]
+
+    handlers:
+        front:
+            type: stream
+            path: "%kernel.logs_dir%/front.log"
+            level: info
+            channels: ["front"]

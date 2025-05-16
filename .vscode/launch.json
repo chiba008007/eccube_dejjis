@@ -13,7 +13,7 @@
       "pathMappings": {
         "/var/www/html": "${workspaceFolder}/html"
       },
-      "log": true
+      "log": false
     }
     // {
     //     "name": "Launch currently open script",

@@ -9,10 +9,12 @@ use Eccube\Entity\AbstractEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Customize\Entity\Traits\TimestampableTrait;
 use Customize\Validator\UniqueHelloName;
+use Customize\Validator\StartBeforeEnd;
 
 /**
  * @ORM\Entity(repositoryClass=HelloRepository::class)
  * @ORM\HasLifecycleCallbacks()
+ * @StartBeforeEnd
  */
 // イベントリスナーの有効化
 class Hello extends AbstractEntity
@@ -42,6 +44,51 @@ class Hello extends AbstractEntity
      */
     private $comment;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $imagePath;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\Type("\DateTimeInterface")
+     */
+    private $startDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Assert\Type("\DateTimeInterface")
+     */
+    private $endDate;
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+    public function setStartDate(?\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+        return $this;
+    }
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+    public function setEndDate(?\DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
+        return $this;
+    }
+
+    public function getImagePath(): ?string
+    {
+        return $this->imagePath;
+    }
+    public function setImagePath(?string $imagePath): self
+    {
+        $this->imagePath = $imagePath;
+        return $this;
+    }
 
     public function getId(): ?int
     {

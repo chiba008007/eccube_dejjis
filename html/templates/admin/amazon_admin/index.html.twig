@@ -1,0 +1,27 @@
+{% extends '@admin/default_frame.twig' %}
+
+
+{% block title %}Amazon注文API{%endblock %}
+
+
+{% block sub_title %}注文作成テスト{% endblock %}
+
+{% block main %}
+<form method="post">
+    <div class="row">
+        <div class="col-md-6">
+            <button type="submit" class="btn btn-primary">
+                Amazon注文を送信
+            </button>
+        </div>
+    </div>
+</form>
+
+{% if result is not null %}
+<div class="mt-3 alert alert-success">
+    <strong>レスポンス:</strong><br />
+    <pre>{{ result|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+</div>
+{% endif %}
+
+{% endblock %}

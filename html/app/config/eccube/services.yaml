@@ -201,10 +201,3 @@ services:
     Customize\Validator\StartBeforeEndValidator:
         tags:
             - { name: "validator.constraint_validator" }
-    Customize\Event\AdminMenuEventSubscriber:
-        class: Customize\Event\AdminMenuEventSubscriber
-        autowire: true
-        autoconfigure: false
-        public: true
-        tags:
-            - { name: kernel.event_subscriber }

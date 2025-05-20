@@ -1,0 +1,20 @@
+{
+  "name": "eccube_dejjis",
+  "version": "1.0.0",
+  "description": "### トップページ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://chiba008007: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@github.com/chiba008007/eccube_dejjis.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chiba008007/eccube_dejjis/issues"
+  },
+  "homepage": "https://github.com/chiba008007/eccube_dejjis#readme"
+}

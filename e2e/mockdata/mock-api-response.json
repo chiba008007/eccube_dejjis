@@ -1,0 +1,5 @@
+{
+  "orderId": "MOCK123",
+  "orderName": "これはモック商品名です",
+  "status": "success"
+}

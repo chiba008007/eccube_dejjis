@@ -4,7 +4,7 @@ test('商品を登録して一覧に反映される・追加した商品を削�
   const productName = 'テスト商品_' + Date.now();
 
   // 管理画面ログイン
-  await page.goto('http://localhost/admin/login');
+  await page.goto('/admin/login');
   await page.fill('input[name="login_id"]', 'admin');
   await page.fill('input[name="password"]', 'password');
   await page.click('button[type="submit"]');

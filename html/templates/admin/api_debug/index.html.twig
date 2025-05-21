@@ -1,0 +1,13 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% block title %}APIデバッグ{% endblock %}
+{% block sub_title %}モック or 実APIレスポンス確認{% endblock %}
+
+{% block main %}
+<h2>APIレスポンス確認</h2>
+
+<p><strong>現在のモード：</strong>{{ mode }}</p>
+<p><strong>リクエスト先：</strong>{{ url }}</p>
+
+<pre style="background:#f4f4f4; padding:1rem; white-space:pre-wrap;">{{ response }}</pre>
+{% endblock %}

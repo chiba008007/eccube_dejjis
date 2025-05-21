@@ -51,6 +51,7 @@ services:
       - ./html:/var/www/html
       - ./php.ini:/usr/local/etc/php/php.ini
       - ./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./e2e/server/mockdata:/var/www/html/mockdata
     depends_on:
       - db
     environment:

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<cXML payloadID="response-123" timestamp="2025-05-20T12:01:00+00:00" version="1.2.014" xml:lang="en-US">
-  <Response>
-    <Status code="200" text="OK">Success</Status>
-  </Response>
-</cXML>

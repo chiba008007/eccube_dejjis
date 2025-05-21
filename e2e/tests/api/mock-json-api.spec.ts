@@ -8,8 +8,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const host = process.env.API_HOST;
-const requestBody = JSON.parse(fs.readFileSync(path.join(__dirname,'../../mockdata/mock-json-api-request.json'), 'utf-8' ));
-const mockResponse  = JSON.parse(fs.readFileSync(path.join(__dirname,'../../mockdata/mock-json-api-response.json' ), 'utf-8'));
+const requestBody = JSON.parse(fs.readFileSync(path.join(__dirname,'../../server/mockdata/mock-json-api-request.json'), 'utf-8' ));
+const mockResponse  = JSON.parse(fs.readFileSync(path.join(__dirname,'../../server/mockdata/mock-json-api-response.json' ), 'utf-8'));
 
 test('モックAPIにPOSTして固定レスポンスを返す', async () => {
   // Step 1: モックサーバーを立てる
@@ -23,11 +23,11 @@ test('モックAPIにPOSTして固定レスポンスを返す', async () => {
     }
   });
 
-  await new Promise<void>((resolve) => server.listen(3456, resolve));
+  await new Promise<void>((resolve) => server.listen(3356, resolve));
 
   // Step 2: APIリクエスト用の context を生成
   const context = await playwrightRequest.newContext();
-  const response = await context.post(`${host}:3456/amazonApiSample`,
+  const response = await context.post(`${host}:3356/amazonApiSample`,
     requestBody
   );
 

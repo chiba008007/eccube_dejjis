@@ -27,7 +27,16 @@ services:
         ]
       timeout: 20s
       retries: 5
-
+  mock_api:
+    container_name: mock-api-server
+    profiles: ["mock"]
+    image: node:18
+    working_dir: /app
+    volumes:
+       - ./e2e/server:/app
+    command: node server.js
+    ports:
+      - "3456:3456"
   web:
     build:
       context: .
@@ -45,6 +54,7 @@ services:
     depends_on:
       - db
     environment:
+      API_MODE: ${API_MODE:-mock}
       PHP_INI_SCAN_DIR: /usr/local/etc/php/conf.d
       ECCUBE_DATABASE_URL: "mysql://eccube:eccube@db:3306/eccube?serverVersion=8.0"
       ECCUBE_ADMIN_USER: "admin"

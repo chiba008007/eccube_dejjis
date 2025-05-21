@@ -17,7 +17,7 @@ class ApiDebugController extends AbstractController
         $mode = getenv('API_MODE') ?: 'unknown';
 
         $url = $mode === 'mock'
-            ? 'http://mock-api-server:3456/amazonApiSample/PunchoutOrderMessage'
+            ? 'http://mock-api-server:3456/amazonApiSample'
             : 'https://real.api.example.com/endpoint'; // 実APIに差し替え
 
         try {
@@ -36,6 +36,20 @@ class ApiDebugController extends AbstractController
                 'body' => $cxml_request,
             ]);
             $body = (string) $res->getBody();
+            // cxmlをphpで解析
+            // BuyerCookie を取り出す
+            libxml_use_internal_errors(true);
+            $xml = simplexml_load_string($body);
+            $buyerCookie = (string)$xml->Message->PunchOutOrderMessage->BuyerCookie;
+
+            $requestXml = simplexml_load_string($cxml_request);
+            $sentBuyerCookie = (string)$requestXml->Request->PunchOutSetupRequest->BuyerCookie;
+            $matched = $buyerCookie === $sentBuyerCookie;
+            $matchResult = $matched
+                ? "✔ BuyerCookie 一致: $buyerCookie"
+                : "✖ BuyerCookie 不一致\n送信: $sentBuyerCookie\n受信: $buyerCookie";
+
+
         } catch (\Exception $e) {
             $body = "エラー" . $e->getMessage();
         }
@@ -43,6 +57,7 @@ class ApiDebugController extends AbstractController
             'mode' => $mode,
             'url' => $url,
             'response' => $body,
+            'match_result' => $matchResult,
         ]);
     }
 }

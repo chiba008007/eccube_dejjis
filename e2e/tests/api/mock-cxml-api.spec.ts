@@ -56,7 +56,7 @@ test('モックAPIにPOSTして固定レスポンスを返す(cXML)', async () =
   expect(response.status()).toBe(200);
 
   const xmlText = await response.text();
-  expect(xmlText).toContain('<!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.035/cXML.dtd">'); // 一部に含まれていること
+  expect(xmlText).toContain('<?xml version="1.0" encoding="UTF-8"?>'); // 一部に含まれていること
   // expect(xmlText).toMatch(/<cXML.*?>[\s\S]*<\/cXML>/);
   expect(xmlText).toBe(mockResponseXml); // 完全一致
 });

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cXML payloadID="123456789" timestamp="2025-05-20T12:00:00+00:00" version="1.2.014" xml:lang="en-US">
+  <Header>
+    <From>
+      <Credential domain="DUNS">
+        <Identity>123456789</Identity>
+      </Credential>
+    </From>
+    <To>
+      <Credential domain="DUNS">
+        <Identity>987654321</Identity>
+      </Credential>
+    </To>
+    <Sender>
+      <Credential domain="DUNS">
+        <Identity>111111111</Identity>
+        <SharedSecret>secret</SharedSecret>
+      </Credential>
+      <UserAgent>PlaywrightTester</UserAgent>
+    </Sender>
+  </Header>
+  <Request>
+    <OrderRequest>
+      <OrderRequestHeader orderID="ORDER-001" orderDate="2025-05-20">
+        <Total>
+          <Money currency="USD">100.00</Money>
+        </Total>
+      </OrderRequestHeader>
+    </OrderRequest>
+  </Request>
+</cXML>

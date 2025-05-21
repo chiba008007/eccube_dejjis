@@ -6,6 +6,7 @@ const path = require('path');
 
 const PORT = 3456;
 
+<<<<<<< HEAD
 // const requestXml = fs.readFileSync(path.join(__dirname, 'mockdata/mock-cxml-api-request.xml'), 'utf-8');
 // const responseXml = fs.readFileSync(path.join(__dirname, 'mockdata/mock-cxml-api-response.xml'), 'utf-8');
 
@@ -45,6 +46,15 @@ const server = http.createServer((req, res) => {
       res.end( 'Internal Server Error' );
     }
 
+=======
+const requestXml = fs.readFileSync(path.join(__dirname, 'mockdata/mock-cxml-api-request.xml'), 'utf-8');
+const responseXml = fs.readFileSync(path.join(__dirname, 'mockdata/mock-cxml-api-response.xml'), 'utf-8');
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'POST' && req.url === '/amazonApiSample') {
+    res.writeHead(200, { 'Content-Type': 'application/xml' });
+    res.end(responseXml);
+>>>>>>> b6c0549 (mock用サーバー追加)
   } else {
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');

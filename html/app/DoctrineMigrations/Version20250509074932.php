@@ -20,7 +20,6 @@ final class Version20250509074932 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE dtb_base_info ADD company_name_vn VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE dtb_cart CHANGE total_price total_price NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL, CHANGE delivery_fee_total delivery_fee_total NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL');
         $this->addSql('ALTER TABLE dtb_cart_item CHANGE price price NUMERIC(12, 2) DEFAULT \'0\' NOT NULL');
         $this->addSql('ALTER TABLE dtb_customer CHANGE buy_total buy_total NUMERIC(12, 2) UNSIGNED DEFAULT \'0\'');
@@ -32,7 +31,6 @@ final class Version20250509074932 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE dtb_base_info DROP company_name_vn');
         $this->addSql('ALTER TABLE dtb_cart CHANGE total_price total_price NUMERIC(12, 2) UNSIGNED DEFAULT \'0.00\' NOT NULL, CHANGE delivery_fee_total delivery_fee_total NUMERIC(12, 2) UNSIGNED DEFAULT \'0.00\' NOT NULL');
         $this->addSql('ALTER TABLE dtb_cart_item CHANGE price price NUMERIC(12, 2) DEFAULT \'0.00\' NOT NULL');
         $this->addSql('ALTER TABLE dtb_customer CHANGE buy_total buy_total NUMERIC(12, 2) UNSIGNED DEFAULT \'0.00\'');

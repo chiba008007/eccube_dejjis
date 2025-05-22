@@ -26,7 +26,6 @@ final class Version20250509053110 extends AbstractMigration
         $this->addSql('ALTER TABLE dtb_order CHANGE subtotal subtotal NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL, CHANGE discount discount NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL, CHANGE delivery_fee_total delivery_fee_total NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL, CHANGE charge charge NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL, CHANGE tax tax NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL, CHANGE total total NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL, CHANGE payment_total payment_total NUMERIC(12, 2) UNSIGNED DEFAULT \'0\' NOT NULL');
         $this->addSql('ALTER TABLE dtb_order_item CHANGE price price NUMERIC(12, 2) DEFAULT \'0\' NOT NULL');
         $this->addSql('ALTER TABLE dtb_payment CHANGE charge charge NUMERIC(12, 2) UNSIGNED DEFAULT \'0\'');
-        $this->addSql('ALTER TABLE dtb_product ADD maker_name VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void

@@ -19,11 +19,9 @@ final class Version20250516011618 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE hello ADD image_path VARCHAR(255) DEFAULT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        $this->addSql('ALTER TABLE hello DROP image_path');
     }
 }

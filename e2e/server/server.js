@@ -19,14 +19,15 @@ const responseMap = {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'
   },
+  '/punchOutSetupRequestPunchoutOrderMessage': {
+    contentType: 'application/xml',
+    file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'
+  },
   '/amazonJsonApiSample': {
     contentType: 'application/json',
     file: 'mock-json-api-response.json'
   },
-  // '/amazonErrorApiSample': {
-  //   contentType: 'application/xml',
-  //   file: 'mock-error-api-response.xml'
-  // }
+
 };
 
 

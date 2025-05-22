@@ -6,9 +6,52 @@
 {% block main %}
 <h2>APIレスポンス確認</h2>
 
+<form method="post">
+  <label>テストAPIを選択:</label>
+  <select name="api_type">
+  <option value="cxml_TEST" {% if api_type == 'cxml' %}selected{% endif %}>CXML API TEST</option>
+  <option value="cxml_punchout" {% if api_type == 'cxml_punchout' %}selected{% endif %}>CXML PunchOut</option>
+  <option value="json" {% if api_type == 'json' %}selected{% endif %}>JSON API</option>
+  </select>
+  <button type="submit" class="btn btn-primary">実行</button>
+</form>
+
 <p><strong>現在のモード：</strong>{{ mode }}</p>
 <p><strong>リクエスト先：</strong>{{ url }}</p>
 <h4>照合結果</h4>
 <pre>{{ match_result }}</pre>
+<h4>レスポンス構造（解析済み）</h4>
+{{ _self.render_xml(response_parsed) }}
+{% macro render_xml(node) %}
+<ul style="margin-left: 1em; border-left: 2px solid #ccc; padding-left: 1em;">
+    <li>
+        <strong>&lt;{{ node.tagName }}&gt;</strong>
+
+        {% if node.attributes %}
+            <ul>
+                {% for attr, val in node.attributes %}
+                    <li><em>@{{ attr }}</em> = "{{ val }}"</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if node.value %}
+            <div style="margin-left: 1em; color: #555;">{{ node.value }}</div>
+        {% endif %}
+
+        {% if node.children %}
+            {% for child in node.children %}
+                {{ _self.render_xml(child) }}
+            {% endfor %}
+        {% endif %}
+    </li>
+</ul>
+{% endmacro %}
+
+<h4>レスポンス内容</h4>
 <pre style="background:#f4f4f4; padding:1rem; white-space:pre-wrap;">{{ response }}</pre>
+<h4>リクエスト内容</h4>
+<pre style="background:#eef; padding:1rem; white-space:pre-wrap;">{{ request_body }}</pre>
+
+
 {% endblock %}

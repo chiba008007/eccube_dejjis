@@ -6,49 +6,78 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use GuzzleHttp\Client;
+use Symfony\Component\HttpFoundation\Request;
 
 class ApiDebugController extends AbstractController
 {
     /**
      * @Route("%eccube_admin_route%/api/debug", name="app_admin_api_debug")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $mode = getenv('API_MODE') ?: 'unknown';
 
-        $url = $mode === 'mock'
-            ? 'http://mock-api-server:3456/amazonApiSample'
-            : 'https://real.api.example.com/endpoint'; // 実APIに差し替え
+        // 選択されたAPIの種類（デフォルトは cxml）
+        $apiType = $request->get('api_type', 'cxml_TEST');
 
+        $map = [
+            'cxml_TEST' => [
+                'url' => [
+                    'mock' => 'http://mock-api-server:3456/amazonApiSample',
+                    'real' => 'https://real.api.example.com/amazonApiSample',
+                ],
+                'file' => '/var/www/html/mockdata/mock-cxml-api-request.xml',
+                'content_type' => 'application/xml',
+            ],
+            'cxml_punchout' => [
+                'url' => [
+                    'mock' => 'http://mock-api-server:3456/punchOutSetupRequestPunchoutOrderMessage',
+                    'real' => 'https://real.api.example.com/punchOutSetupRequestPunchoutOrderMessage',
+                ],
+                'file' => '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml',
+                'content_type' => 'application/xml',
+            ],
+            'json' => [
+                'url' => [
+                    'mock' => 'http://mock-api-server:3456/amazonJsonApiSample',
+                    'real' => 'https://real.api.example.com/amazonJsonApiSample',
+                ],
+                'file' => '/var/www/html/mockdata/mock-json-api-request.json',
+                'content_type' => 'application/json',
+            ],
+        ];
+
+        $selected = $map[$apiType];
+        $url = $selected['url'][$mode];
+        $responseParsed = null;
         try {
-            // ここでcxml形式の文字列をリクエストするデータの準備
-            $cxml_request = "";
-            if ($mode === 'mock') {
-                // リクエスト値モック用(cxml)
-                $cxml_request = file_get_contents('/var/www/html/mockdata/mock-cxml-api-request.xml');
-            } else {
-                // リクエスト本番用
-                $cxml_request = "";
-            }
+
+            $requestBody = file_get_contents($selected['file']);
             $client = new Client();
             $res = $client->post($url, [
-                'headers' => ['Content-Type' => 'application/xml'],
-                'body' => $cxml_request,
+                'headers' => ['Content-Type' => $selected['content_type']],
+                'body' => $requestBody,
             ]);
             $body = (string) $res->getBody();
-            // cxmlをphpで解析
-            // BuyerCookie を取り出す
-            libxml_use_internal_errors(true);
-            $xml = simplexml_load_string($body);
-            $buyerCookie = (string)$xml->Message->PunchOutOrderMessage->BuyerCookie;
 
-            $requestXml = simplexml_load_string($cxml_request);
-            $sentBuyerCookie = (string)$requestXml->Request->PunchOutSetupRequest->BuyerCookie;
-            $matched = $buyerCookie === $sentBuyerCookie;
-            $matchResult = $matched
-                ? "✔ BuyerCookie 一致: $buyerCookie"
-                : "✖ BuyerCookie 不一致\n送信: $sentBuyerCookie\n受信: $buyerCookie";
+            // XML専用のBuyerCookieチェック（CXMLのみ）
+            $matchResult = '';
+            if (str_starts_with($apiType, 'cxml')) {
+                libxml_use_internal_errors(true);
+                $xml = simplexml_load_string($body);
+                $buyerCookie = (string)$xml->Message->PunchOutOrderMessage->BuyerCookie;
 
+                $requestXml = simplexml_load_string($requestBody);
+                $sentBuyerCookie = (string)$requestXml->Request->PunchOutSetupRequest->BuyerCookie;
+
+                $matched = $buyerCookie === $sentBuyerCookie;
+                $matchResult = $matched
+                    ? "✔ BuyerCookie 一致: $buyerCookie"
+                    : "✖ BuyerCookie 不一致\n送信: $sentBuyerCookie\n受信: $buyerCookie";
+            }
+            if ($xml) {
+                $responseParsed = $this->xmlToStructuredArray($xml);
+            }
 
         } catch (\Exception $e) {
             $body = "エラー" . $e->getMessage();
@@ -58,6 +87,29 @@ class ApiDebugController extends AbstractController
             'url' => $url,
             'response' => $body,
             'match_result' => $matchResult,
+            'request_body' => $requestBody,
+            'api_type' => $apiType,
+            'response_parsed' => $responseParsed,
         ]);
+    }
+
+    private function xmlToStructuredArray(\SimpleXMLElement $xml): array
+    {
+        $result = [
+            'tagName' => $xml->getName(),
+            'attributes' => [],
+            'value' => trim((string)$xml) ?: null,
+            'children' => [],
+        ];
+
+        foreach ($xml->attributes() as $attrName => $attrValue) {
+            $result['attributes'][$attrName] = (string)$attrValue;
+        }
+
+        foreach ($xml->children() as $child) {
+            $result['children'][] = $this->xmlToStructuredArray($child);
+        }
+
+        return $result;
     }
 }

@@ -48,6 +48,11 @@ jobs:
       working-directory: ./html
       run: php bin/console eccube:install --no-interaction
 
+    - name: Prepare mockdata for AmazonApiService test
+      run: |
+        mkdir -p html/mockdata
+        cp e2e/server/mockdata/ html/mockdata/
+
     - name: Run custom PHPUnit tests
       working-directory: ./html
       run: ./vendor/bin/phpunit -c phpunit.custom.xml

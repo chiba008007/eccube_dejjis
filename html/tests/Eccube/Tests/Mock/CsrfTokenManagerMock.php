@@ -47,7 +47,7 @@ class CsrfTokenManagerMock implements CsrfTokenManagerInterface
         return true;
     }
 
-    public function removeToken(string $tokenId): ?CsrfToken
+    public function removeToken(string $tokenId): ?string
     {
         return null;
     }

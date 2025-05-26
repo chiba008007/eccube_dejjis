@@ -24,6 +24,7 @@ class AmazonApiService
     }
     public function createSample(): ResponseInterface
     {
+
         // $requestBody = file_get_contents("/var/www/html/mockdata/mock-cxml-api-request.xml");
         $requestBody = file_get_contents(__DIR__ . '/../../../mockdata/mock-cxml-api-request.xml');
 

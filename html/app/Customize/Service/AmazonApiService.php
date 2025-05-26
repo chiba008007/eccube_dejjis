@@ -3,6 +3,7 @@
 namespace Customize\Service;
 
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 class AmazonApiService
 {
@@ -20,6 +21,19 @@ class AmazonApiService
         ]);
 
         return $response->toArray();
+    }
+    public function createSample(): ResponseInterface
+    {
+        $requestBody = file_get_contents("/var/www/html/mockdata/mock-cxml-api-request.xml");
+        $url = "http://mock-api-server:3456/amazonApiSample";
+
+
+        $res = $this->httpClient->request("POST", $url, [
+                'headers' => ['Content-Type' => 'application/xml'],
+                'body' => $requestBody,
+            ]);
+
+        return $res;
     }
 
 }

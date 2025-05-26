@@ -44,9 +44,9 @@ jobs:
       working-directory: ./html
       run: composer install
 
-    - name: Run EC-CUBE migrations
+    - name: Install EC-CUBE (schema & fixtures)
       working-directory: ./html
-      run: php bin/console doctrine:migrations:migrate --no-interaction
+      run: php bin/console eccube:install --no-interaction
 
     - name: Run custom PHPUnit tests
       working-directory: ./html

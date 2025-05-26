@@ -2,5 +2,11 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "eslint.validate": ["typescript", "typescriptreact"]
+  "eslint.validate": ["typescript", "typescriptreact"],
+  "intelephense.stubs": [
+    "symfony"
+  ],
+  "intelephense.environment.includePaths": [
+    "vendor/symfony/security-csrf"
+  ]
 }

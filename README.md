@@ -47,7 +47,7 @@ html/app/config/eccube/packages/dev/maker.yaml
 
 - Docker + PHP + Xdebug + VS Code デバッグ環境構築手順書.docx [参照](https://github.com/t-chiba008007/eccube-document/raw/refs/heads/main/Docker%20+%20PHP%20+%20Xdebug%20+%20VS%20Code%20%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89%E6%89%8B%E9%A0%86%E6%9B%B8.docx)
 
-```
+
 
 
 
@@ -101,28 +101,34 @@ html/app/config/eccube/packages/dev/maker.yaml
 
 ### .envファイルについて
 
-```
+
 # この状態を確認
 APP_ENV=prod
 APP_DEBUG=0
 
 
 # mysqlを使うように id:root pw:rootにしてある
-DATABASE_URL=mysql://root:root@mysql8:3306/eccube?serverVersion=8.0
 
-```
+`DATABASE_URL=mysql://root:root@mysql8:3306/eccube?serverVersion=8.0`
 
 
 ## プロジェクトに PHP CS Fixer を追加する
+
 ```
+
 composer require --dev friendsofphp/php-cs-fixer
 touch .php-cs-fixer.php
 ・VSCode に拡張機能を入れる
+
 ```
+
+
 - VSCode の設定をする
   - VSCode の Ctrl + Shift + P を押す
   - 「Preferences: Open Settings (JSON)」を選ぶ
   - settings.jsonの修正
+
+
 ```
 {
   "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
@@ -130,9 +136,11 @@ touch .php-cs-fixer.php
   "php-cs-fixer.rules": "@PSR12",
   "php-cs-fixer.autoFixBySave": true
 }
+
 ```
 
-## synfonyのルーティングの確認 ##
+
+## synfonyのルーティングの確認
 - コンテナから実施
 
 `bin/console debug:router`
@@ -143,14 +151,14 @@ touch .php-cs-fixer.php
 `bin/console make:controller`
 - 対話式 → コントローラ名を入力
 
-```
- Choose a name for your controller class (e.g. DeliciousChefController):<br>
+Choose a name for your controller class (e.g. DeliciousChefController):<br>
  > HelloController<br>
 <br>
  created: app/Customize/Controller/HelloController.php<br>
  created: templates/hello/index.html.twig<br>
 
- ```
+
+---
 
 ## synfornyのEntityとRepositoryの作成
 - コンテナからコマンド実施
@@ -166,3 +174,25 @@ php bin/console doctrine:migrations:migrate
 `https://github.com/t-chiba008007/eccube-document`
  - Update Docker + PHP + Xdebug + VS Code デバッグ環境構築手順書.docx
  - EC-CUBE 4.2 開発環境構築手順 (Docker Desktop).docx
+
+
+## テストの実施
+- 下記想定です
+  - playwrightテストについて:uiのテスト
+    - コミット時は行わない(とても時間がかかってしまう)
+    - コミット前にローカルで行うのが良いかと思います
+    - ブラウザ上での操作をイメージ
+  - ciテストについて：関数のテスト
+  　- eccubeをすべて単体テスト実施すると、時間＋メモリ多可になるため別途テスト用のxmlを用意して実施
+      - html/phpunit.custom.xmlを実施するように変更
+      - tests/Serviceフォルダ以下のテストを実施するように変更
+### playwrightテストの実施
+  - e2eフォルダ以下で実施
+  `npx playwright test ui`
+
+  `npx playwright test api`
+
+### ciテストの実施
+  1. .github/workflows/test.ymlに記載しているためgithubにコミットしたタイミングで実行
+  2. コマンドで実行
+  `docker exec -it php8 php bin/phpunit -c /var/www/html/phpunit.custom.xml`

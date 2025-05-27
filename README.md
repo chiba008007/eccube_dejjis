@@ -108,21 +108,27 @@ APP_DEBUG=0
 
 
 # mysqlを使うように id:root pw:rootにしてある
-DATABASE_URL=mysql://root:root@mysql8:3306/eccube?serverVersion=8.0
 
-```
+`DATABASE_URL=mysql://root:root@mysql8:3306/eccube?serverVersion=8.0`
 
 
 ## プロジェクトに PHP CS Fixer を追加する
+
 ```
+
 composer require --dev friendsofphp/php-cs-fixer
 touch .php-cs-fixer.php
 ・VSCode に拡張機能を入れる
+
 ```
+
+
 - VSCode の設定をする
   - VSCode の Ctrl + Shift + P を押す
   - 「Preferences: Open Settings (JSON)」を選ぶ
   - settings.jsonの修正
+
+
 ```
 {
   "php-cs-fixer.executablePath": "${workspaceFolder}/vendor/bin/php-cs-fixer",
@@ -130,9 +136,11 @@ touch .php-cs-fixer.php
   "php-cs-fixer.rules": "@PSR12",
   "php-cs-fixer.autoFixBySave": true
 }
+
 ```
 
-## synfonyのルーティングの確認 ##
+
+## synfonyのルーティングの確認
 - コンテナから実施
 
 `bin/console debug:router`
@@ -143,14 +151,14 @@ touch .php-cs-fixer.php
 `bin/console make:controller`
 - 対話式 → コントローラ名を入力
 
-```
- Choose a name for your controller class (e.g. DeliciousChefController):<br>
+Choose a name for your controller class (e.g. DeliciousChefController):<br>
  > HelloController<br>
 <br>
  created: app/Customize/Controller/HelloController.php<br>
  created: templates/hello/index.html.twig<br>
 
- ```
+
+---
 
 ## synfornyのEntityとRepositoryの作成
 - コンテナからコマンド実施

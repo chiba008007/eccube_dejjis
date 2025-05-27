@@ -11,6 +11,8 @@ echo "MySQL is healthy. Starting EC-CUBE installation..."
 
 cd /var/www/html
 
+
+
 # EC-CUBE 非対話インストール
 php bin/console eccube:install \
   --env=dev \
@@ -28,6 +30,13 @@ php bin/console eccube:install \
   --currency="JPY" \
   --country="JP" \
   --timezone="Asia/Tokyo"
+
+composer dump-autoload
+
+# プラグイン有効化（プラグインコードは実際の値に置き換えてください）
+php bin/console eccube:plugin:install --code=ApiDebugPlugin || true
+php bin/console eccube:plugin:enable --code=ApiDebugPlugin || true
+
 
 # キャッシュのクリアとウォームアップ
 php bin/console cache:clear --no-warmup --env=dev

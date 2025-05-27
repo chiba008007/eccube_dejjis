@@ -22,6 +22,14 @@ class MyCustomController extends AbstractController
         $this->BaseInfo = $baseInfoRepository->get();
     }
     /**
+    * @Method("GET")
+    * @Route("/custom/sampleTest", name="app_controller_custom_sampleTest")
+    */
+    public function sampleTest(): Response
+    {
+        return new Response("Hello, EC-Cube");
+    }
+    /**
      * @Method("GET")
      * @Route("/mycustom", name="app_controller_my_custom")
      * @template("/controller/my_custom/index.html.twig")

@@ -14,7 +14,6 @@ trait BaseInfoTrait
     /**
      * @ORM\Column(name="company_name_vn", type="string", length=255, nullable=true)
      * @Eccube\FormAppend
-     * @Assert\NotBlank(message="入力してください")
      */
     public $company_name_vn;
 }

@@ -47,7 +47,7 @@ html/app/config/eccube/packages/dev/maker.yaml
 
 - Docker + PHP + Xdebug + VS Code デバッグ環境構築手順書.docx [参照](https://github.com/t-chiba008007/eccube-document/raw/refs/heads/main/Docker%20+%20PHP%20+%20Xdebug%20+%20VS%20Code%20%E3%83%87%E3%83%90%E3%83%83%E3%82%B0%E7%92%B0%E5%A2%83%E6%A7%8B%E7%AF%89%E6%89%8B%E9%A0%86%E6%9B%B8.docx)
 
-```
+
 
 
 
@@ -101,7 +101,7 @@ html/app/config/eccube/packages/dev/maker.yaml
 
 ### .envファイルについて
 
-```
+
 # この状態を確認
 APP_ENV=prod
 APP_DEBUG=0

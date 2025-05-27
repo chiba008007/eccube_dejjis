@@ -2,9 +2,9 @@ name: EC-CUBE CI Test
 
 on:
   push:
-    branches: [ main, customize ]
+    branches: [ "**" ]
   pull_request:
-    branches: [ main, customize ]
+    branches: [ "**" ]
 
 jobs:
   test:

@@ -30,7 +30,6 @@ class AmazonApiService
 
         $url = "http://mock-api-server:3456/amazonApiSample";
 
-
         $res = $this->httpClient->request("POST", $url, [
                 'headers' => ['Content-Type' => 'application/xml'],
                 'body' => $requestBody,

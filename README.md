@@ -166,3 +166,25 @@ php bin/console doctrine:migrations:migrate
 `https://github.com/t-chiba008007/eccube-document`
  - Update Docker + PHP + Xdebug + VS Code デバッグ環境構築手順書.docx
  - EC-CUBE 4.2 開発環境構築手順 (Docker Desktop).docx
+
+
+## テストの実施
+- 下記想定です
+  - playwrightテストについて:uiのテスト
+    - コミット時は行わない(とても時間がかかってしまう)
+    - コミット前にローカルで行うのが良いかと思います
+    - ブラウザ上での操作をイメージ
+  - ciテストについて：関数のテスト
+  　- eccubeをすべて単体テスト実施すると、時間＋メモリ多可になるため別途テスト用のxmlを用意して実施
+      - html/phpunit.custom.xmlを実施するように変更
+      - tests/Serviceフォルダ以下のテストを実施するように変更
+### playwrightテストの実施
+  - e2eフォルダ以下で実施
+  `npx playwright test ui`
+
+  `npx playwright test api`
+
+### ciテストの実施
+  1. .github/workflows/test.ymlに記載しているためgithubにコミットしたタイミングで実行
+  2. コマンドで実行
+  `docker exec -it php8 php bin/phpunit -c /var/www/html/phpunit.custom.xml`

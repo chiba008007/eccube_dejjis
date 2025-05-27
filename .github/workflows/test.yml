@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
+    name: test
     services:
       db:
         image: mysql:8.0

@@ -1,15 +1,13 @@
-name: EC-CUBE CI Test
+name: EC-CUBE CI Test (PR)
 
 on:
-  push:
-    branches: [ "**" ]
   pull_request:
-    branches: [ "**" ]
+    branches: ["**"]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: test
+    name: test (pr)
     services:
       db:
         image: mysql:8.0

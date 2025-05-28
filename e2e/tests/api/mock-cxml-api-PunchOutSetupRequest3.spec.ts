@@ -19,7 +19,7 @@ let port: number;
 // モックサーバーを立てる
 test.beforeEach(async ()=>{
   server = createServer((req, res)=>{
-    if(req.method === 'POST' && req.url === '/punchOutSetupRequestPunchoutOrderMessage'){
+    if(req.method === 'POST' && req.url === '/punchOutSetupRequest3'){
       res.writeHead(200, { 'Content-Type': 'application/xml' });
       res.end(mockResponseXml);
     }else{
@@ -44,9 +44,9 @@ test.afterEach(async () => {
     });
   });
 });
-test('モックAPIにPOSTして固定レスポンスを返す(PunchOutSetupRequestからPunchoutOrderMessage)', async () => {
+test('モックAPIにPOSTして固定レスポンスを返す(PunchoutOrderMessage)', async () => {
   const context = await playwrightRequest.newContext();
-  const response = await context.post(`${host}:${port}/punchOutSetupRequestPunchoutOrderMessage`, {
+  const response = await context.post(`${host}:${port}/punchOutSetupRequest3`, {
     headers: {
       'Content-Type': 'application/xml',
     },
@@ -58,6 +58,8 @@ test('モックAPIにPOSTして固定レスポンスを返す(PunchOutSetupReque
 
   const xmlText = await response.text();
   expect(xmlText).toContain('<?xml version="1.0" encoding="UTF-8"?>'); // 一部に含まれていること
-  // expect(xmlText).toMatch(/<cXML.*?>[sS]*</cXML>/);
+  // expect(xmlText).toContain('Success');
+  expect(xmlText).toMatch(/<BuyerCookie>[\s\S]*?<\/BuyerCookie>/);
   expect(xmlText).toBe(mockResponseXml); // 完全一致
 });
+

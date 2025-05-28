@@ -21,12 +21,12 @@ class AmazonTestController extends AbstractController
     }
 
     /**
-     * @Route("/amazonApiPunchOutSetupRequest", name="PunchOutSetupRequest", methods={"GET","POST"})
+     * @Route("/punchOutSetupRequest2", name="PunchOutSetupRequest", methods={"GET","POST"})
      */
-    public function amazonApiPunchOutSetupRequest(AmazonApiServiceConnect $amazonApiService): Response
+    public function punchOutSetupRequest2(AmazonApiServiceConnect $amazonApiService): Response
     {
         $xmlpath = '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml';
-        $result = $amazonApiService->getApiResponse($xmlpath, "http://mock-api-server:3456/amazonApiPunchOutSetupRequest");
+        $result = $amazonApiService->getApiResponse($xmlpath, "http://mock-api-server:3456/punchOutSetupRequest2");
         return $this->json($result);
     }
     /**

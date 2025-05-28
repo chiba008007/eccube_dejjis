@@ -19,7 +19,7 @@ let port: number;
 // モックサーバーを立てる
 test.beforeEach(async ()=>{
   server = createServer((req, res)=>{
-    if(req.method === 'POST' && req.url === '/amazonApiPunchOutSetupRequest'){
+    if(req.method === 'POST' && req.url === '/punchOutSetupRequest2'){
       res.writeHead(200, { 'Content-Type': 'application/xml' });
       res.end(mockResponseXml);
     }else{
@@ -44,9 +44,9 @@ test.afterEach(async () => {
     });
   });
 });
-test('モックAPIにPOSTして固定レスポンスを返す(amazonApiPunchOutSetupRequest)', async () => {
+test('モックAPIにPOSTして固定レスポンスを返す(PunchOutSetupResponse)', async () => {
   const context = await playwrightRequest.newContext();
-  const response = await context.post(`${host}:${port}/amazonApiPunchOutSetupRequest`, {
+  const response = await context.post(`${host}:${port}/punchOutSetupRequest2`, {
     headers: {
       'Content-Type': 'application/xml',
     },

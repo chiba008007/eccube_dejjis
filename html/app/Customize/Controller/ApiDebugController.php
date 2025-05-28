@@ -29,22 +29,23 @@ class ApiDebugController extends AbstractController
                 'file' => '/var/www/html/mockdata/mock-cxml-api-request.xml',
                 'content_type' => 'application/xml',
             ],
-            'cxml_punchout' => [
+            'cxml_punchout_PunchOutSetupRequest2' => [
                 'url' => [
-                    'mock' => 'http://mock-api-server:3456/punchOutSetupRequestPunchoutOrderMessage',
-                    'real' => 'https://real.api.example.com/punchOutSetupRequestPunchoutOrderMessage',
-                ],
-                'file' => '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml',
-                'content_type' => 'application/xml',
-            ],
-            'cxml_punchout_PunchOutSetupRequest' => [
-                'url' => [
-                    'mock' => 'http://mock-api-server:3456/amazonApiPunchOutSetupRequest',
+                    'mock' => 'http://mock-api-server:3456/punchOutSetupRequest2',
                     'real' => 'https://real.api.example.com/******',
                 ],
                 'file' => '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml',
                 'content_type' => 'application/xml',
             ],
+            'cxml_punchout_PunchOutSetupRequest3' => [
+                'url' => [
+                    'mock' => 'http://mock-api-server:3456/punchOutSetupRequest3',
+                    'real' => 'https://real.api.example.com/******',
+                ],
+                'file' => '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml',
+                'content_type' => 'application/xml',
+            ],
+
             'json' => [
                 'url' => [
                     'mock' => 'http://mock-api-server:3456/amazonJsonApiSample',
@@ -62,12 +63,12 @@ class ApiDebugController extends AbstractController
 
             $requestBody = file_get_contents($selected['file']);
             $client = new Client();
-
             $res = $client->post($url, [
                 'headers' => ['Content-Type' => $selected['content_type']],
                 'body' => $requestBody,
             ]);
             $body = (string) $res->getBody();
+
             // XML専用のBuyerCookieチェック（CXMLのみ）
             if (str_starts_with($apiType, 'cxml')) {
                 libxml_use_internal_errors(true);
@@ -92,7 +93,6 @@ class ApiDebugController extends AbstractController
         } catch (\Exception $e) {
             $body = "エラー" . $e->getMessage();
         }
-
         return $this->render('/admin/api_debug/index.html.twig', [
             'mode' => $mode,
             'url' => $url,

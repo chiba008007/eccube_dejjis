@@ -19,6 +19,10 @@ const responseMap = {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'
   },
+  '/amazonApiPunchOutSetupRequest': {
+    contentType: 'application/xml',
+    file: 'mock-cxml-api-response-PunchOutSetupResponse.xml'
+  },
   '/punchOutSetupRequestPunchoutOrderMessage': {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'

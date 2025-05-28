@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cXML payloadID="20250527T123456-789@buyer.com"
+      timestamp="2025-05-27T12:34:56+09:00"
+      xml:lang="en-US">
+  <Response>
+    <Status code="200" text="OK">Success</Status>
+    <PunchOutSetupResponse>
+      <StartPage>
+        <URL>https://www.amazon.com/b2b/punchout/session/abcdef123456</URL>
+      </StartPage>
+    </PunchOutSetupResponse>
+  </Response>
+</cXML>

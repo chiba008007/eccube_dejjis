@@ -12,7 +12,7 @@ class PunchiOutSetUpResponseTest extends TestCase
 {
     public function testCreatePunchOutSetupResponse(): void
     {
-        $path = '/var/www/html/mockdata/mock-cxml-api-response-PunchOutSetupResponse.xml';
+        $path = __DIR__ . '/../../mockdata/mock-cxml-api-response-PunchOutSetupResponse.xml';
         $stubResponseXml = file_get_contents($path);
         $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse->method('getContent')->willReturn($stubResponseXml);

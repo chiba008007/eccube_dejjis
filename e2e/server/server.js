@@ -15,15 +15,11 @@ const responseMap = {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response.xml'
   },
-  '/amazonApiSample/PunchoutOrderMessage': {
-    contentType: 'application/xml',
-    file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'
-  },
-  '/amazonApiPunchOutSetupRequest': {
+  '/punchOutSetupRequest2': {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response-PunchOutSetupResponse.xml'
   },
-  '/punchOutSetupRequestPunchoutOrderMessage': {
+  '/punchOutSetupRequest3': {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'
   },

@@ -1,0 +1,222 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.007/cXML.dtd">
+<cXML payloadID="20181204110720.25750.1821@test.co.jp" timestamp="2018-12-04T11:07:20+09:00" version="1.2.011">
+    <Header>
+        <From>
+            <Credential domain="networkid">
+                <Identity>9032597353</Identity>
+            </Credential>
+        </From>
+        <To>
+            <Credential domain="networkid">
+                <Identity>Amazon</Identity>
+            </Credential>
+        </To>
+        <Sender>
+            <Credential domain="networkid">
+                <Identity>9032597353</Identity>
+                <SharedSecret>XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</SharedSecret>
+            </Credential>
+            <UserAgent>e購買Procurement</UserAgent>
+        </Sender>
+    </Header>
+    <Request>
+        <OrderRequest>
+            <OrderRequestHeader orderDate="2018-12-04T11:07:20+09:00" orderID="R18140323289" orderType="regular" type="new">
+                <Total>
+                    <Money currency="JPY">10466.00</Money>
+                </Total>
+                <ShipTo>
+                    <Address addressID="384" isoCountryCode="JP">
+                        <Name xml:lang="ja-JP">ABC株式会社</Name>
+                        <PostalAddress name="default">
+                            <DeliverTo>購買 太郎</DeliverTo>
+                            <Street>下目黒1-8-1 ARCO TOWER Annex 14F</Street>
+                            <Street>(株)ABC商事DEF事業部GHIJK部</Street>
+                            <City>目黒区</City>
+                            <State>東京都</State>
+                            <PostalCode>153-0064</PostalCode>
+                            <Country isoCountryCode="JP">日本</Country>
+                        </PostalAddress>
+                        <Email name="default">testusera@test.co.jp</Email>
+                        <Phone name="work">
+                            <TelephoneNumber>
+                                <CountryCode isoCountryCode="JP">81</CountryCode>
+                                <AreaOrCityCode />
+                                <Number>0312345678</Number>
+                            </TelephoneNumber>
+                        </Phone>
+                    </Address>
+                </ShipTo>
+                <BillTo>
+                    <Address addressID="384" isoCountryCode="JP">
+                        <Name xml:lang="ja-JP">ABC株式会社</Name>
+                        <PostalAddress name="default">
+                            <DeliverTo>テスト太郎</DeliverTo>
+                            <Street>下目黒1-8-1 ARCO TOWER Annex 14F</Street>
+                            <Street>(株)ABC商事DEF事業部GHIJK部</Street>
+                            <City>目黒区</City>
+                            <State>東京都</State>
+                            <PostalCode>153-0064</PostalCode>
+                            <Country isoCountryCode="JP">日本</Country>
+                        </PostalAddress>
+                        <Email name="default">testusera@test.co.jp</Email>
+                        <Phone name="work">
+                            <TelephoneNumber>
+                                <CountryCode isoCountryCode="JP">81</CountryCode>
+                                <AreaOrCityCode />
+                                <Number>0312345678</Number>
+                            </TelephoneNumber>
+                        </Phone>
+                    </Address>
+                </BillTo>
+                <Shipping>
+                    <Money currency="JPY">0.00</Money>
+                    <Description xml:lang="ja-JP" />
+                </Shipping>
+                <Tax>
+                    <Money currency="JPY">775.00</Money>
+                    <Description xml:lang="ja-JP" />
+                </Tax>
+                <Contact>
+                    <Name xml:lang="ja-JP">ABC株式会社</Name>
+                    <PostalAddress name="default">
+                        <DeliverTo>テスト太郎</DeliverTo>
+                            <Street>下目黒1-8-1 ARCO TOWER Annex 14F</Street>
+                            <Street>(株)ABC商事DEF事業部GHIJK部</Street>
+                        <City>目黒区</City>
+                        <State>東京都</State>
+                        <PostalCode>153-0064</PostalCode>
+                        <Country isoCountryCode="JP">日本</Country>
+                    </PostalAddress>
+                    <Email name="default">testusera@test.co.jp</Email>
+                    <Phone name="work">
+                        <TelephoneNumber>
+                            <CountryCode isoCountryCode="JP">81</CountryCode>
+                            <AreaOrCityCode />
+                            <Number>0312345678</Number>
+                        </TelephoneNumber>
+                    </Phone>
+                </Contact>
+            <Extrinsic name="email">testusera@test.co.jp</Extrinsic>
+        </OrderRequestHeader>
+        <ItemOut lineNumber="1" quantity="1">
+                <ItemID>
+                    <SupplierPartID>B072HH634P</SupplierPartID>
+                    <SupplierPartAuxiliaryID>358-9479393-6024619,1</SupplierPartAuxiliaryID>
+                </ItemID>
+                <ItemDetail>
+                    <UnitPrice>
+                        <Money currency="JPY">5855.00</Money>
+                    </UnitPrice>
+                    <Description xml:lang="ja-JP">Logicool ロジクール K840 メカニカルキーボード 108フルキー 日本語レイアウト ROMER-G 26キー ロールオーバー対応 アルミニウムボディ USB 有線接続</Description>
+                    <UnitOfMeasure>EA</UnitOfMeasure>
+                    <Classification domain="UNSPSC" />
+                    <ManufacturerPartID>K840</ManufacturerPartID>
+                    <ManufacturerName>ロジクール</ManufacturerName>
+                    <Extrinsic name="soldBy">Amazon</Extrinsic>
+                    <Extrinsic name="fulfilledBy">Amazon</Extrinsic>
+                    <Extrinsic name="category">COMPUTERS</Extrinsic>
+                    <Extrinsic name="subCategory">COMPUTER_PERIPHERALS_AND_ACCESSORIES</Extrinsic>
+                    <Extrinsic name="itemCondition">New</Extrinsic>
+                    <Extrinsic name="qualifiedOffer">true</Extrinsic>
+                    <Extrinsic name="UPC">NA</Extrinsic>
+                    <Extrinsic name="detailPageURL">https://www.amazon.co.jp/dp/B072HH634P</Extrinsic>
+                    <Extrinsic name="ean">4943765045427</Extrinsic>
+                    <Extrinsic name="preference">default</Extrinsic>
+                </ItemDetail>
+                <Shipping>
+                    <Money currency="JPY">0.00</Money>
+                    <Description xml:lang="ja-JP">配送料（税抜）.</Description>
+                </Shipping>
+                <Tax>
+                    <Money currency="JPY">468.00</Money>
+                    <Description xml:lang="ja-JP">消費税（配送料に対する税額を含む）</Description>
+                    <TaxDetail category="vat" percentageRate="8.00" purpose="subtotalTax">
+                        <TaxAmount>
+                            <Money currency="JPY">468.00</Money>
+                        </TaxAmount>
+                    </TaxDetail>
+                </Tax>
+            </ItemOut>
+            <ItemOut lineNumber="2" quantity="1">
+                <ItemID>
+                    <SupplierPartID>B004QZPDVQ</SupplierPartID>
+                    <SupplierPartAuxiliaryID>358-9479393-6024619,2</SupplierPartAuxiliaryID>
+                </ItemID>
+                <ItemDetail>
+                    <UnitPrice>
+                        <Money currency="JPY">1185.00</Money>
+                    </UnitPrice>
+                    <Description xml:lang="ja-JP">エレコム ハイスピード HDMIケーブル 4K 3DフルHD イーサネット対応 5.0m ブラック DH-HD14ER50BK</Description>
+                    <UnitOfMeasure>EA</UnitOfMeasure>
+                    <Classification domain="UNSPSC" />
+                    <ManufacturerPartID>DH-HD14ER50BK</ManufacturerPartID>
+                    <ManufacturerName>エレコム</ManufacturerName>
+                    <Extrinsic name="soldBy">Amazon</Extrinsic>
+                    <Extrinsic name="fulfilledBy">Amazon</Extrinsic>
+                    <Extrinsic name="category">CONSUMER_ELECTRONICS</Extrinsic>
+                    <Extrinsic name="subCategory">OTHER_CONSUMER_ELECTRONICS</Extrinsic>
+                    <Extrinsic name="itemCondition">New</Extrinsic>
+                    <Extrinsic name="qualifiedOffer">true</Extrinsic>
+                    <Extrinsic name="UPC">NA</Extrinsic>
+                    <Extrinsic name="detailPageURL">https://www.amazon.co.jp/dp/B004QZPDVQ</Extrinsic>
+                    <Extrinsic name="ean">4953103258730</Extrinsic>
+                    <Extrinsic name="preference">default</Extrinsic>
+                </ItemDetail>
+                <Shipping>
+                    <Money currency="JPY">0.00</Money>
+                    <Description xml:lang="ja-JP">配送料（税抜）.</Description>
+                </Shipping>
+                <Tax>
+                    <Money currency="JPY">95.00</Money>
+                    <Description xml:lang="ja-JP">消費税（配送料に対する税額を含む）</Description>
+                    <TaxDetail category="vat" percentageRate="8.00" purpose="subtotalTax">
+                        <TaxAmount>
+                            <Money currency="JPY">95.00</Money>
+                        </TaxAmount>
+                    </TaxDetail>
+                </Tax>
+            </ItemOut>
+            <ItemOut lineNumber="3" quantity="1">
+                <ItemID>
+                    <SupplierPartID>B00A7O7ZKM</SupplierPartID>
+                    <SupplierPartAuxiliaryID>358-9479393-6024619,3</SupplierPartAuxiliaryID>
+                </ItemID>
+                <ItemDetail>
+                    <UnitPrice>
+                        <Money currency="JPY">2651.00</Money>
+                    </UnitPrice>
+                    <Description xml:lang="ja-JP">Logicool  ロジクール ワイヤレスキーボード K360r</Description>
+                    <UnitOfMeasure>EA</UnitOfMeasure>
+                    <Classification domain="UNSPSC" />
+                    <ManufacturerPartID>K360r</ManufacturerPartID>
+                    <ManufacturerName>ロジクール</ManufacturerName>
+                    <Extrinsic name="soldBy">Amazon</Extrinsic>
+                    <Extrinsic name="fulfilledBy">Amazon</Extrinsic>
+                    <Extrinsic name="category">COMPUTERS</Extrinsic>
+                    <Extrinsic name="subCategory">COMPUTER_PERIPHERALS_AND_ACCESSORIES</Extrinsic>
+                    <Extrinsic name="itemCondition">New</Extrinsic>
+                    <Extrinsic name="qualifiedOffer">true</Extrinsic>
+                    <Extrinsic name="UPC">NA</Extrinsic>
+                    <Extrinsic name="detailPageURL">https://www.amazon.co.jp/dp/B00A7O7ZKM</Extrinsic>
+                    <Extrinsic name="ean">4943765037392</Extrinsic>
+                    <Extrinsic name="preference">default</Extrinsic>
+                </ItemDetail>
+                <Shipping>
+                    <Money currency="JPY">0.00</Money>
+                    <Description xml:lang="ja-JP">配送料（税抜）.</Description>
+                </Shipping>
+                <Tax>
+                    <Money currency="JPY">212.00</Money>
+                    <Description xml:lang="ja-JP">消費税（配送料に対する税額を含む）</Description>
+                    <TaxDetail category="vat" percentageRate="8.00" purpose="subtotalTax">
+                        <TaxAmount>
+                            <Money currency="JPY">212.00</Money>
+                        </TaxAmount>
+                    </TaxDetail>
+                </Tax>
+            </ItemOut>
+        </OrderRequest>
+    </Request>
+</cXML>

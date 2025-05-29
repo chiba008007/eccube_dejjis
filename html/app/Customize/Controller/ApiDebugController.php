@@ -53,6 +53,14 @@ class ApiDebugController extends AbstractController
                 'file' => '/var/www/html/mockdata/mock-cxml-api-orderRequest.xml',
                 'content_type' => 'application/xml',
             ],
+            'cxml_shipmentNotice' => [
+                'url' => [
+                    'mock' => 'http://mock-api-server:3456/shipmentNotice',
+                    'real' => 'https://real.api.example.com/******',
+                ],
+                'file' => '/var/www/html/mockdata/mock-cxml-api-shipmentNotice.xml',
+                'content_type' => 'application/xml',
+            ],
 
             'json' => [
                 'url' => [

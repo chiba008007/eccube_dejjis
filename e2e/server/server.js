@@ -1,14 +1,11 @@
-// e2e/server/server.js
+// server.js
 
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const url = require('url');
 
 const PORT = 3456;
-
-// const requestXml = fs.readFileSync(path.join(__dirname, 'mockdata/mock-cxml-api-request.xml'), 'utf-8');
-// const responseXml = fs.readFileSync(path.join(__dirname, 'mockdata/mock-cxml-api-response.xml'), 'utf-8');
-
 
 const responseMap = {
   '/amazonApiSample': {
@@ -23,26 +20,33 @@ const responseMap = {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'
   },
+  '/orderRequest': {
+    contentType: 'application/xml',
+    file: 'mock-cxml-api-orderConfirmation.xml'
+  },
   '/amazonJsonApiSample': {
     contentType: 'application/json',
     file: 'mock-json-api-response.json'
   },
-
 };
 
-
 const server = http.createServer((req, res) => {
-  if (req.method === 'POST' && responseMap[req.url] ) {
-    const { contentType, file } = responseMap[req.url];
+  const parsedUrl = url.parse(req.url);
+  const pathOnly = parsedUrl.pathname;
+
+  const route = responseMap[pathOnly];
+
+  if (req.method === 'POST' && route) {
+    const { contentType, file } = route;
     const filePath = path.join(__dirname, 'mockdata', file);
 
-    try{
+    try {
       const responseData = fs.readFileSync(filePath, 'utf-8');
       res.writeHead(200, { 'Content-Type': contentType });
       res.end(responseData);
-    }catch(err){
+    } catch (err) {
       res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end( 'Internal Server Error' );
+      res.end('Internal Server Error');
     }
 
   } else {

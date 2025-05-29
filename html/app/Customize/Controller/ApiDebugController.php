@@ -45,6 +45,14 @@ class ApiDebugController extends AbstractController
                 'file' => '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml',
                 'content_type' => 'application/xml',
             ],
+            'cxml_orderRequest' => [
+                'url' => [
+                    'mock' => 'http://mock-api-server:3456/orderRequest',
+                    'real' => 'https://real.api.example.com/******',
+                ],
+                'file' => '/var/www/html/mockdata/mock-cxml-api-orderRequest.xml',
+                'content_type' => 'application/xml',
+            ],
 
             'json' => [
                 'url' => [
@@ -60,13 +68,13 @@ class ApiDebugController extends AbstractController
         $responseParsed = null;
         $matchResult = '';
         try {
-
             $requestBody = file_get_contents($selected['file']);
             $client = new Client();
             $res = $client->post($url, [
                 'headers' => ['Content-Type' => $selected['content_type']],
                 'body' => $requestBody,
             ]);
+
             $body = (string) $res->getBody();
 
             // XML専用のBuyerCookieチェック（CXMLのみ）
@@ -93,6 +101,7 @@ class ApiDebugController extends AbstractController
         } catch (\Exception $e) {
             $body = "エラー" . $e->getMessage();
         }
+
         return $this->render('/admin/api_debug/index.html.twig', [
             'mode' => $mode,
             'url' => $url,

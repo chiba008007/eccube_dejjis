@@ -4,7 +4,7 @@ import { createServer , Server} from 'http'; // モック用のapiサーバー�
 import fs from 'fs';
 import path from 'path';
 const requestBodyXml = fs.readFileSync(path.join(__dirname,'../../server/mockdata/mock-cxml-api-orderRequest.xml'), 'utf-8' );
-const mockResponseXml = fs.readFileSync(path.join(__dirname,'../../server/mockdata/mock-cxml-api-orderShipmentNotice.xml' ), 'utf-8');
+const mockResponseXml = fs.readFileSync(path.join(__dirname,'../../server/mockdata/mock-cxml-api-shipmentNotice.xml' ), 'utf-8');
 
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -18,7 +18,7 @@ let port: number;
 // モックサーバーを立てる
 test.beforeEach(async ()=>{
   server = createServer((req, res)=>{
-    if(req.method === 'POST' && req.url === '/orderRequest6'){
+    if(req.method === 'POST' && req.url === '/shipmentNotice'){
       res.writeHead(200, { 'Content-Type': 'application/xml' });
       res.end(mockResponseXml);
     }else{
@@ -45,7 +45,7 @@ test.afterEach(async () => {
 });
 test('配送情報の確認。発送単位で送信される ※1つの注文が複数の発送に分かれる場合、注文単位ではなく発送単位となりますのでご注意ください。(orderRequest6)', async () => {
   const context = await playwrightRequest.newContext();
-  const response = await context.post(`${host}:${port}/orderRequest6`, {
+  const response = await context.post(`${host}:${port}/shipmentNotice`, {
     headers: {
       'Content-Type': 'application/xml',
     },

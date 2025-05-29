@@ -26,7 +26,7 @@ const responseMap = {
   },
   '/shipmentNotice': {
     contentType: 'application/xml',
-    file: 'mock-cxml-api-orderShipmentNotice.xml'
+    file: 'mock-cxml-api-shipmentNotice.xml'
   },
   '/amazonJsonApiSample': {
     contentType: 'application/json',

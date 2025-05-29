@@ -2,9 +2,9 @@ name: EC-CUBE CI (dev)
 
 on:
   push:
-    branches-ignore: [customize]
+    branches: [customize]
   pull_request:
-    branches-ignore: [customize]
+    branches: [customize]
 
 jobs:
   test:

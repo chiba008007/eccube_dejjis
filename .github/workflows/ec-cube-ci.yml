@@ -1,14 +1,13 @@
-name: EC-CUBE CI (main)
+name: EC-CUBE CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, customize]
   pull_request:
-    branches: [main]
+    branches: [main, customize]
 
 jobs:
   test:
-    name: main-check
     runs-on: ubuntu-latest
 
     services:
@@ -49,6 +48,12 @@ jobs:
         working-directory: ./html
         run: php bin/console eccube:install --no-interaction
 
-      - name: Run custom PHPUnit tests
+      - name: Run PHPUnit tests for main
+        if: github.ref == 'refs/heads/main'
+        working-directory: ./html
+        run: ./vendor/bin/phpunit -c phpunit.custom.xml
+
+      - name: Run PHPUnit tests for customize
+        if: github.ref == 'refs/heads/customize'
         working-directory: ./html
         run: ./vendor/bin/phpunit -c phpunit.custom.xml

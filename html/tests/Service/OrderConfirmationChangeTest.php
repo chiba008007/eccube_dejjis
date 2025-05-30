@@ -7,7 +7,7 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Customize\Service\AmazonApiServiceConnect;
 
-class OrderConfirmationTest extends TestCase
+class OrderConfirmationChangeTest extends TestCase
 {
     private $xml;
     private $xmlString;
@@ -15,7 +15,7 @@ class OrderConfirmationTest extends TestCase
     protected function setUp(): void
     {
         $request = __DIR__ . '/../../mockdata/mock-cxml-api-orderRequest.xml';
-        $path = __DIR__ . '/../../mockdata/mock-cxml-api-orderConfirmation.xml';
+        $path = __DIR__ . '/../../mockdata/mock-cxml-api-orderConfirmation_change.xml';
         $stubResponseXml = file_get_contents($path);
         $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse->method('getContent')->willReturn($stubResponseXml);
@@ -63,16 +63,17 @@ class OrderConfirmationTest extends TestCase
                 $this->assertNotEmpty($cred->Identity);
             }
         }
-        $OrderReference = $xml->Request->ConfirmationRequest->OrderReference;
-        $DocumentReference = $xml->Request->ConfirmationRequest->OrderReference->DocumentReference;
-        $this->assertNotEmpty($OrderReference);
-        $this->assertNotEmpty((string)$OrderReference['orderID']);
-        $this->assertNotEmpty((string)$DocumentReference['payloadID']);
+        $ConfirmationItem = $xml->Request->ConfirmationRequest->ConfirmationItem;
+        $this->assertNotEmpty($ConfirmationItem);
+
         // 商品情報1つ以上
         $ConfirmationRequest = $xml->Request->ConfirmationRequest;
         $this->assertGreaterThan(0, count($ConfirmationRequest->ConfirmationItem));
         foreach ($ConfirmationRequest->ConfirmationItem as $item) {
             $this->assertNotEmpty($item->ConfirmationStatus);
+            $this->assertNotEmpty($item->ConfirmationStatus->UnitPrice);
+            $this->assertNotEmpty($item->ConfirmationStatus->UnitPrice->Money);
+            $this->assertNotEmpty((string)$item->ConfirmationStatus->UnitPrice->Money['currency']);
             $this->assertNotEmpty($item->ConfirmationStatus->Tax->Money);
             $this->assertNotEmpty($item->ConfirmationStatus->Tax->TaxDetail);
             $this->assertNotEmpty($item->ConfirmationStatus->Tax->TaxDetail->TaxAmount->Money);

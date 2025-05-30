@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.024/Fulfill.dtd">
+<cXML payloadID="1665477804870.384.9564@amazon.com" timestamp="2022-10-11T08:43:24+0000" xml:lang="ja-JP">
+    <Header>
+        <From>
+            <Credential domain="NetworkId">
+                <Identity>Amazon</Identity>
+            </Credential>
+        </From>
+        <To>
+            <Credential domain="networkid">
+                <Identity>9032597353</Identity>
+            </Credential>
+        </To>
+        <Sender>
+            <Credential domain="NetworkId">
+                <Identity>Amazon</Identity>
+            </Credential>
+            <UserAgent>Amazon LLC eProcurement Application</UserAgent>
+        </Sender>
+    </Header>
+    <Request>
+        <ConfirmationRequest>
+            <ConfirmationHeader confirmID="249-1159585-0304664" operation="new" type="detail" noticeDate="2022-10-11T08:43:24+0000">
+                <Total>
+                <Money currency="JPY">1540.00</Money>
+                </Total>
+                <Shipping>
+                    <Money currency="JPY">400.00</Money>
+                    <Description xml:lang="ja-JP">配送料（税抜）</Description>
+                </Shipping>
+                    <Tax>
+                       <Money currency="JPY">140.00</Money>
+                       <Description xml:lang="ja-JP">消費税（配送料に対する税額を含む）</Description>
+                    </Tax>
+            </ConfirmationHeader>
+            <OrderReference orderID="PKAO221006046-01" orderDate="2022-10-11T00:00:00Z">
+                <DocumentReference payloadID="20221011084210.99999.64305.catalogmall"/>
+            </OrderReference>
+            <ConfirmationItem quantity="1" lineNumber="1">
+                <UnitOfMeasure>EA</UnitOfMeasure>
+                <ConfirmationStatus quantity="1" type="detail">
+                    <UnitOfMeasure>EA</UnitOfMeasure>
+                    <UnitPrice>
+                        <Money currency="JPY">1000.00</Money>
+                    </UnitPrice>
+                    <Tax>
+                        <Money currency="JPY">140.00</Money>
+                        <Description xml:lang="ja-JP">消費税（配送料に対する税額を含む）</Description>
+                        <TaxDetail category="vat" percentageRate="10.00" purpose="subtotalTax">
+                            <TaxAmount>
+                                <Money currency="JPY">100.00</Money>
+                            </TaxAmount>
+                        </TaxDetail>
+                        <TaxDetail category="vat" percentageRate="10.00" purpose="shippingTax">
+                            <TaxAmount>
+                                <Money currency="JPY">40.00</Money>
+                            </TaxAmount>
+                        </TaxDetail>
+                    </Tax>
+                    <Shipping>
+                        <Money currency="JPY">400.00</Money>
+                        <Description xml:lang="ja-JP">配送料（税抜）</Description>
+                    </Shipping>
+                    <Comments type="confirmID">249-1159585-0304664</Comments>
+                </ConfirmationStatus>
+            </ConfirmationItem>
+        </ConfirmationRequest>
+    </Request>
+</cXML>

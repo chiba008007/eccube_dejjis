@@ -28,6 +28,10 @@ const responseMap = {
     contentType: 'application/xml',
     file: 'mock-cxml-api-orderConfirmation.xml'
   },
+  '/orderRequestChange': {
+    contentType: 'application/xml',
+    file: 'mock-cxml-api-orderConfirmation_change.xml'
+  },
   '/shipmentNotice': {
     contentType: 'application/xml',
     file: 'mock-cxml-api-shipmentNotice.xml'

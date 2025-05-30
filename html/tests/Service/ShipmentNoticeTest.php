@@ -14,6 +14,7 @@ class ShipmentNoticeTest extends TestCase
 
     protected function setUp(): void
     {
+        $request = __DIR__ . '/../../mockdata/mock-cxml-api-orderRequest.xml';
         $path = __DIR__ . '/../../mockdata/mock-cxml-api-shipmentNotice.xml';
         $stubResponseXml = file_get_contents($path);
         $mockResponse = $this->createMock(ResponseInterface::class);
@@ -22,8 +23,8 @@ class ShipmentNoticeTest extends TestCase
         $mockClient = $this->createMock(HttpClientInterface::class);
         $mockClient->method('request')->willReturn($mockResponse);
 
-        $service = new AmazonApiServiceConnect($mockClient, 'http://mock-api-server:3456/shipmentNotice');
-        $result = $service->getApiResponse($path, "http://mock-api-server:3456/shipmentNotice");
+        $service = new AmazonApiServiceConnect($mockClient);
+        $result = $service->getApiResponse($request, "http://mock-api-server:3456/shipmentNotice");
         $this->assertNotEmpty($result, 'XMLファイルが読み込めていません');
 
         $this->xmlString = $result->asXML();

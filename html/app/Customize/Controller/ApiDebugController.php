@@ -45,6 +45,14 @@ class ApiDebugController extends AbstractController
                 'file' => '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml',
                 'content_type' => 'application/xml',
             ],
+            'cxml_punchout_PunchOutSetupRequest3_finCatalog' => [
+                'url' => [
+                    'mock' => 'http://mock-api-server:3456/punchOutSetupRequest3_finCatalog',
+                    'real' => 'https://real.api.example.com/******',
+                ],
+                'file' => '/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml',
+                'content_type' => 'application/xml',
+            ],
             'cxml_orderRequest' => [
                 'url' => [
                     'mock' => 'http://mock-api-server:3456/orderRequest',
@@ -71,6 +79,7 @@ class ApiDebugController extends AbstractController
                 'content_type' => 'application/json',
             ],
         ];
+
         $selected = $map[$apiType];
         $url = $selected['url'][$mode];
         $responseParsed = null;
@@ -82,9 +91,7 @@ class ApiDebugController extends AbstractController
                 'headers' => ['Content-Type' => $selected['content_type']],
                 'body' => $requestBody,
             ]);
-
             $body = (string) $res->getBody();
-
             // XML専用のBuyerCookieチェック（CXMLのみ）
             if (str_starts_with($apiType, 'cxml')) {
                 libxml_use_internal_errors(true);

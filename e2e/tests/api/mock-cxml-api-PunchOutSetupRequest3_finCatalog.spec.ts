@@ -44,7 +44,7 @@ test.afterEach(async () => {
     });
   });
 });
-test('ユーザーがAmazonビジネス上で「カタログ連携を終了してサインアウト」を押下したケース(PunchoutOrderMessage)', async () => {
+test('ユーザーがAmazonビジネス上で「カタログ連携を終了してサインアウト」を押下したケース(punchOutSetupRequest3_finCatalog)', async () => {
   const context = await playwrightRequest.newContext();
   const response = await context.post(`${host}:${port}/punchOutSetupRequest3_finCatalog`, {
     headers: {

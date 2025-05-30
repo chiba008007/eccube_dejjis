@@ -22,7 +22,7 @@ const responseMap = {
   },
   '/punchOutSetupRequest3_finCatalog': {
     contentType: 'application/xml',
-    file: 'mock-cxml-api-response-PunchoutOrderMessage_fincatalog.xml'
+    file: 'mock-cxml-api-response-PunchoutOrderMessage_finCatalog.xml'
   },
   '/orderRequest': {
     contentType: 'application/xml',

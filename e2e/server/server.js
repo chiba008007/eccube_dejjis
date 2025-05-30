@@ -20,6 +20,10 @@ const responseMap = {
     contentType: 'application/xml',
     file: 'mock-cxml-api-response-PunchoutOrderMessage.xml'
   },
+  '/punchOutSetupRequest3_finCatalog': {
+    contentType: 'application/xml',
+    file: 'mock-cxml-api-response-PunchoutOrderMessage_fincatalog.xml'
+  },
   '/orderRequest': {
     contentType: 'application/xml',
     file: 'mock-cxml-api-orderConfirmation.xml'

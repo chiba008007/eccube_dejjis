@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.024/Fulfill.dtd">
+<cXML payloadID="1676253740120.1263.8432@amazon.com" timestamp="2023-02-13T02:02:20+0000" xml:lang="ja-JP">
+    <Header>
+        <From>
+            <Credential domain="NetworkId">
+                <Identity>Amazonbusinessintegrationsjp</Identity>
+            </Credential>
+        </From>
+        <To>
+            <Credential domain="DUNS">
+                <Identity>690566815</Identity>
+            </Credential>
+        </To>
+        <Sender>
+            <Credential domain="NetworkId">
+                <Identity>Amazonbusinessintegrationsjp</Identity>
+            </Credential>
+            <UserAgent>Amazon LLC eProcurement Application</UserAgent>
+        </Sender>
+    </Header>
+    <Request>
+        <ConfirmationRequest>
+            <ConfirmationHeader operation="new" type="detail" noticeDate="2023-02-13T02:02:20+0000">
+                <Comments type="OrderErrorCode">発注番号に含まれる商品の合計数量が、カート内の商品の合計数量を下回っています。レジに進んだ後にカート内の商品を変更した可能性があります。現在、Amazon ビジネスはこの機能をサポートしていません。このような問題を避けるため、レジに進んだ後にカート内の商品の数量を変更しないでください。[エラーコード: 018-007]  || 注文自体がキャンセルされたか、注文内の商品にエラーがあります。エラー理由が記載されている場合はそちらを参照してください。[エラーコード: 001-012]</Comments>
+            </ConfirmationHeader>
+            <OrderReference orderID="969085" orderDate="2023-02-13T02:01:16Z">
+                <DocumentReference payloadID="20230213.020134616.PROD.969085.755541-1"/>
+            </OrderReference>
+            <ConfirmationItem quantity="5" lineNumber="1">
+                <UnitOfMeasure>個</UnitOfMeasure>
+                <ConfirmationStatus quantity="5" type="reject">
+                    <UnitOfMeasure>個</UnitOfMeasure>
+                    <Comments type="LineItemErrorCode">この商品の在庫が不足しているため、注文を履行することができません。在庫状況に関する情報を確認しています。それまでの間、類似の商品を選択してください。[エラーコード: 015-005]</Comments>
+                </ConfirmationStatus>
+            </ConfirmationItem>
+        </ConfirmationRequest>
+    </Request>
+</cXML>

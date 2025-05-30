@@ -14,6 +14,7 @@ class PunchoutOrderMessageTest extends TestCase
 
     protected function setUp(): void
     {
+        $request = __DIR__ . '/../../mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml';
         $path = __DIR__ . '/../../mockdata/mock-cxml-api-response-PunchoutOrderMessage.xml';
         $stubResponseXml = file_get_contents($path);
         $mockResponse = $this->createMock(ResponseInterface::class);
@@ -22,8 +23,8 @@ class PunchoutOrderMessageTest extends TestCase
         $mockClient = $this->createMock(HttpClientInterface::class);
         $mockClient->method('request')->willReturn($mockResponse);
 
-        $service = new AmazonApiServiceConnect($mockClient, 'http://mock-api-server:3456/punchOutSetupRequest3');
-        $result = $service->getApiResponse($path, "http://mock-api-server:3456/punchOutSetupRequest3");
+        $service = new AmazonApiServiceConnect($mockClient);
+        $result = $service->getApiResponse($request, "http://mock-api-server:3456/punchOutSetupRequest3");
         $this->assertNotEmpty($result, 'XMLファイルが読み込めていません');
 
         $this->xmlString = $result->asXML();

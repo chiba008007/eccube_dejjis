@@ -36,11 +36,14 @@ class MyCustomController extends AbstractController
      */
     public function index(ProductRepository $product_repository, PaginatorInterface $paginator)
     {
+        if (function_exists('\opcache_reset')) {
+            \opcache_reset();
+        }
         $products = $product_repository->findAll();
         $string = "test";
 
         return [
-            'controller_name' => 'MyCustomController12',
+            'controller_name' => 'MyCustomController123',
             'products' => $products,
             'string' => $string
         ];

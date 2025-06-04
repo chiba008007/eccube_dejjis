@@ -48,12 +48,6 @@ jobs:
         working-directory: ./html
         run: php bin/console eccube:install --no-interaction
 
-      - name: Run PHPUnit tests for main
-        if: github.ref == 'refs/heads/main'
-        working-directory: ./html
-        run: ./vendor/bin/phpunit -c phpunit.custom.xml
-
-      - name: Run PHPUnit tests for customize
-        if: github.ref == 'refs/heads/customize'
+      - name: Run PHPUnit tests
         working-directory: ./html
         run: ./vendor/bin/phpunit -c phpunit.custom.xml

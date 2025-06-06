@@ -5,24 +5,69 @@ namespace Tests\Service;
 use PHPUnit\Framework\TestCase;
 use Customize\Service\PunchoutSessionService;
 use Doctrine\ORM\EntityManagerInterface;
-use Customize\Entity\DtbPunchoutSession;
+use Psr\Log\LoggerInterface;
 
 class PunchoutSessionServiceTest extends TestCase
 {
-    private $entityManager;
-    private $service;
-
-    public function testCreateSessionSuccess()
+    public function testCreateSessionReturnsTrueOnSuccess()
     {
+        // EntityManagerのモック
+        // persistとflushが1回ずつ呼ばれていることを確認
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->expects($this->once())->method("persist");
+        $entityManager->expects($this->once())->method("flush");
+
+        // Loggerのモック
+        $logger = $this->createMock(LoggerInterface::class);
+
+        // serviceのインスタンス生成
+        $service = new PunchoutSessionService($entityManager, $logger);
+
+        // パラメータ例
         $params = [
-            'buyer_cookie' => 'SAMPLE_BUYER_COOKIE',
-            'request_xml' => '<xml>dummy</xml>',
-            'user_email' => 'sample@example.com',
-            'user_first_name' => 'テスト',
-            'user_last_name' => '太郎',
-            'start_date' => new \DateTime('2025-06-05 16:00:00'),
+            'buyer_cookie' => 'cookie',
+            'request_xml' => '<xml></xml>',
+            'user_email' => 'test@example.com',
+            'user_first_name' => '太郎',
+            'user_last_name' => '千葉',
+            'start_date' => '2024-06-06 00:00:00',
             'country' => 'JP',
+            'business_unit' => '営業部',
+            'ship_to_json' => '{}',
+            'expire_at' => null,
+            'is_used' => false,
         ];
 
+        // 実行
+        $result = $service->createSession($params);
+
+        // 結果をアサート
+        $this->assertTrue($result);
+
+    }
+
+    public function testCreateSessionReturnsFalseOnException()
+    {
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager->method("persist")->will($this->throwException(new \Exception('DB Error')));
+
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('debug')->with($this->stringContains('登録処理失敗'));
+
+        $service = new PunchoutSessionService($entityManager, $logger);
+
+        $params = [
+            'buyer_cookie' => 'cookie',
+            'request_xml' => '<xml></xml>',
+            'user_email' => 'test@example.com',
+            'user_first_name' => '太郎',
+            'user_last_name' => '千葉',
+            'start_date' => '2024-06-06 00:00:00',
+            // ...他も必要に応じて省略OK
+        ];
+
+        $result = $service->createSession($params);
+
+        $this->assertFalse($result);
     }
 }

@@ -23,7 +23,7 @@ class PunchoutSessionService
     {
         try {
             $session = new DtbPunchoutSession();
-            $session->setBuyerCookie($params['buyer_cookie']);
+            $session->setBuyerCookie($params['buyer_cookie'].time());
             $session->setRequestXml($params['request_xml']);
             $session->setUserEmail($params['user_email'] ?? null);
             $session->setUserFirstName($params['user_first_name'] ?? null);

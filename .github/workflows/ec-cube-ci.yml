@@ -44,6 +44,10 @@ jobs:
         working-directory: ./html
         run: composer install
 
+      - name: Install EC-CUBE plugin
+        working-directory: ./html
+        run: php bin/console eccube:composer:require ec-cube/securitychecker42
+
       - name: Install EC-CUBE (schema & fixtures)
         working-directory: ./html
         run: php bin/console eccube:install --no-interaction

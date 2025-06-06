@@ -47,6 +47,10 @@ jobs:
         working-directory: ./html
         run: php bin/console eccube:install --no-interaction
 
+      - name: Clear cache after install
+        working-directory: ./html
+        run: php bin/console cache:clear
+
       - name: Install EC-CUBE plugin
         working-directory: ./html
         run: php bin/console eccube:composer:require ec-cube/securitychecker42

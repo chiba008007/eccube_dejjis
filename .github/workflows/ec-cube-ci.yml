@@ -33,7 +33,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.0'
-          extensions: mbstring, pdo, pdo_mysql
+          extensions: mbstring, pdo, pdo_mysql, intl, zip
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -57,4 +57,4 @@ jobs:
 
       - name: Run PHPUnit tests
         working-directory: ./html
-        run: ./vendor/bin/phpunit -c phpunit.custom.xml
+        run: ./vendor/bin/simple-phpunit -c phpunit.custom.xml

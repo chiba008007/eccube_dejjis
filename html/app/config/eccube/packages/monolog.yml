@@ -5,5 +5,5 @@ monolog:
         front:
             type: stream
             path: "%kernel.logs_dir%/front.log"
-            level: info
+            level: debug
             channels: ["front"]

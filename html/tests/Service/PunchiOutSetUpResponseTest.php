@@ -24,7 +24,7 @@ class PunchiOutSetUpResponseTest extends TestCase
         $service = new AmazonApiServiceConnect($mockClient);
         $result = $service->getApiResponse($request, "http://mock-api-server:3456/punchOutSetupRequest2");
 
-        $this->assertSame('https://www.amazon.com/b2b/punchout/session/abcdef123456', (string) $result->Response->PunchOutSetupResponse->StartPage->URL);
+        $this->assertSame('{{start_url}}', (string) $result->Response->PunchOutSetupResponse->StartPage->URL);
         $this->assertSame('Success', (string) $result->Response->Status);
         $this->assertSame('200', (string) $result->Response->Status['code']);
         $this->assertSame('OK', (string) $result->Response->Status['text']);

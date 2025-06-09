@@ -1,0 +1,50 @@
+{% extends '@admin/default_frame.twig' %}
+
+{% block title %}APIデバッグ{% endblock %}
+{% block sub_title %}モック or 実APIレスポンス確認{% endblock %}
+
+{% block main %}
+<h2>自作APIレスポンス確認</h2>
+
+<p><strong>現在のモード：</strong>{{ mode }}</p>
+<p><strong>リクエスト先：</strong>{{ url }}</p>
+<button id="sendRequestBtn" class="btn btn-primary">XMLを読み込んで送信</button>
+
+<p><strong>レスポンスXml：</strong></p>
+<pre id="responseArea" style="margin-top: 1em; background: #f4f4f4; padding: 1em; max-height: 400px; overflow: auto;"></pre>
+
+<p><strong>リクエストXml：</strong></p>
+<pre style="background:#eef; padding:1rem; white-space:pre-wrap;">{{ request_body }}</pre>
+
+
+
+<script type="text/javascript">
+document.getElementById('sendRequestBtn').addEventListener('click', function () {
+    // XMLファイルを取得してそのまま送信
+    fetch(`{{ request_body_web_path }}`)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('XMLファイルの取得に失敗しました');
+            }
+            return res.text();
+        })
+        .then(xmlBody => {
+            return fetch('{{ url }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/xml'
+                },
+                body: xmlBody
+            });
+        })
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById('responseArea').textContent = data;
+        })
+        .catch(error => {
+            document.getElementById('responseArea').textContent = 'エラー: ' + error;
+        });
+});
+</script>
+
+{% endblock %}

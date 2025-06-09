@@ -128,61 +128,71 @@ class ApiDebugController extends AbstractController
         $matchResult = '';
 
         try {
-            $this->runInTransaction(function () use ($selected, $url, $apiType, &$body, &$responseParsed, &$matchResult, &$requestBody) {
-                $requestBody = file_get_contents($selected['file']);
+            //  $this->runInTransaction(function () use ($selected, $url, $apiType, &$body, &$responseParsed, &$matchResult, &$requestBody) {
 
-                $fileXml = simplexml_load_string($requestBody);
-                $this->logger->debug('登録処理の開始', ['method' => __METHOD__]);
-                // requestBodyをDBに保持
-                $params = [
-                    "buyer_cookie" => (string)$fileXml->Request->PunchOutSetupRequest->BuyerCookie,
-                    "request_xml" => $fileXml->asXML(),
-                    "user_email" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[1],
-                    "user_first_name" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[3],
-                    "user_last_name" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[4],
-                    "start_date" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[2],
-                    "country" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[0],
-                    "business_unit" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[5],
-                    "ship_to_json" => json_encode($fileXml->Request->PunchOutSetupRequest->ShipTo),
-                    "expire_at" => (new \DateTime())->modify('+1 hour'), // 有効期限 1時間を指定
-                    "is_used" => true
-                ];
+            $requestBody = file_get_contents($selected['file']);
 
-                if ($this->punchoutSessionService->createSession($params) === false) {
-                    throw new \Exception();
-                } else {
-                    $this->logger->debug('登録処理の成功', ['method' => __METHOD__]);
+            /*
+                                        $fileXml = simplexml_load_string($requestBody);
+                                        $this->logger->debug('登録処理の開始', ['method' => __METHOD__]);
+                                        if (
+                                            $apiType === "cxml_punchout_PunchOutSetupRequest2" ||
+                                            $apiType === "cxml_punchout_PunchOutSetupRequest3" ||
+                                            $apiType === "cxml_punchout_PunchOutSetupRequest3_finCatalog"
+                                        ) {
+                                            // requestBodyをDBに保持
+                                            $params = [
+                                                "buyer_cookie" => (string)$fileXml->Request->PunchOutSetupRequest->BuyerCookie,
+                                                "request_xml" => $fileXml->asXML(),
+                                                "user_email" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[1],
+                                                "user_first_name" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[3],
+                                                "user_last_name" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[4],
+                                                "start_date" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[2],
+                                                "country" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[0],
+                                                "business_unit" => (string)$fileXml->Request->PunchOutSetupRequest->Extrinsic[5],
+                                                "ship_to_json" => json_encode($fileXml->Request->PunchOutSetupRequest->ShipTo),
+                                                "expire_at" => (new \DateTime())->modify('+1 hour'), // 有効期限 1時間を指定
+                                                "is_used" => true
+                                            ];
+
+                                            if ($this->punchoutSessionService->createSession($params) === false) {
+                                                throw new \Exception();
+                                            } else {
+                                                $this->logger->debug('登録処理の成功', ['method' => __METHOD__]);
+                                            }
+
+                                        }
+                        */
+
+            $client = new Client();
+            $res = $client->post($url, [
+                'headers' => ['Content-Type' => $selected['content_type']],
+                'body' => $requestBody,
+            ]);
+            $body = (string) $res->getBody();
+            // XML専用のBuyerCookieチェック（CXMLのみ）
+            if (str_starts_with($apiType, 'cxml')) {
+                libxml_use_internal_errors(true);
+
+                $xml = simplexml_load_string($body);
+                $buyerCookie = "";
+                if (isset($xml->Message->PunchOutOrderMessage->BuyerCookie)) {
+                    $buyerCookie = (string)$xml->Message->PunchOutOrderMessage->BuyerCookie;
                 }
+                $requestXml = simplexml_load_string($requestBody);
+                $sentBuyerCookie = (string)$requestXml->Request->PunchOutSetupRequest->BuyerCookie;
 
-                $client = new Client();
-                $res = $client->post($url, [
-                    'headers' => ['Content-Type' => $selected['content_type']],
-                    'body' => $requestBody,
-                ]);
-                $body = (string) $res->getBody();
-                // XML専用のBuyerCookieチェック（CXMLのみ）
-                if (str_starts_with($apiType, 'cxml')) {
-                    libxml_use_internal_errors(true);
+                $matched = $buyerCookie === $sentBuyerCookie;
+                $matchResult = $matched
+                    ? "✔ BuyerCookie 一致: $buyerCookie"
+                    : "✖ BuyerCookie 不一致\n送信: $sentBuyerCookie\n受信: $buyerCookie";
+            }
+            if ($xml) {
+                $responseParsed = $this->xmlToStructuredArray($xml);
+            }
 
-                    $xml = simplexml_load_string($body);
-                    $buyerCookie = "";
-                    if (isset($xml->Message->PunchOutOrderMessage->BuyerCookie)) {
-                        $buyerCookie = (string)$xml->Message->PunchOutOrderMessage->BuyerCookie;
-                    }
-                    $requestXml = simplexml_load_string($requestBody);
-                    $sentBuyerCookie = (string)$requestXml->Request->PunchOutSetupRequest->BuyerCookie;
-
-                    $matched = $buyerCookie === $sentBuyerCookie;
-                    $matchResult = $matched
-                        ? "✔ BuyerCookie 一致: $buyerCookie"
-                        : "✖ BuyerCookie 不一致\n送信: $sentBuyerCookie\n受信: $buyerCookie";
-                }
-                if ($xml) {
-                    $responseParsed = $this->xmlToStructuredArray($xml);
-                }
-
-                $this->entityManager->flush();
-            });
+            //     $this->entityManager->flush();
+            //     });
 
             return $this->render('/admin/api_debug/index.html.twig', [
                 'mode' => $mode,

@@ -23,8 +23,10 @@ final class Version20250605060009 extends AbstractMigration
         $this->addSql("
             CREATE TABLE dtb_punchout_session (
                 id INT AUTO_INCREMENT NOT NULL,
+                session_id VARCHAR(255) NOT NULL,
                 buyer_cookie VARCHAR(255) NOT NULL,
                 request_xml LONGTEXT NOT NULL,
+                browser_post_url LONGTEXT NOT NULL,
                 user_email VARCHAR(255) DEFAULT NULL,
                 user_first_name VARCHAR(255) DEFAULT NULL,
                 user_last_name VARCHAR(255) DEFAULT NULL,
@@ -33,12 +35,13 @@ final class Version20250605060009 extends AbstractMigration
                 business_unit VARCHAR(64) DEFAULT NULL,
                 ship_to_json LONGTEXT DEFAULT NULL,
                 expire_at DATETIME DEFAULT NULL,
-                is_used TINYINT(1) DEFAULT 0,
+                is_used BOOLEAN DEFAULT FALSE,
                 create_date DATETIME NOT NULL,
                 update_date DATETIME NOT NULL,
                 UNIQUE INDEX UNIQ_punchout_session_buyer_cookie (buyer_cookie),
+                UNIQUE INDEX UNIQ_punchout_session_session_id (session_id),
                 PRIMARY KEY(id)
-            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB;
         ");
 
         // this up() migration is auto-generated, please modify it to your needs

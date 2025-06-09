@@ -27,6 +27,13 @@ class DtbPunchoutSession
     /**
      * @var string
      *
+     * @ORM\Column(name="session_id", type="string", length=255, nullable=false)
+     */
+    private $sessionId;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="buyer_cookie", type="string", length=255, nullable=false)
      */
     private $buyerCookie;
@@ -37,6 +44,13 @@ class DtbPunchoutSession
      * @ORM\Column(name="request_xml", type="text", length=0, nullable=false)
      */
     private $requestXml;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="browser_post_url", type="text", length=0, nullable=false)
+     */
+    private $browserPostUrl;
 
     /**
      * @var string|null
@@ -122,6 +136,17 @@ class DtbPunchoutSession
         return $this->id;
     }
 
+    public function getSessionId(): ?string
+    {
+        return $this->sessionId;
+    }
+
+    public function setSessionId(string $sessionId): self
+    {
+        $this->sessionId = $sessionId;
+        return $this;
+    }
+
     public function getBuyerCookie(): ?string
     {
         return $this->buyerCookie;
@@ -141,6 +166,16 @@ class DtbPunchoutSession
     public function setRequestXml(string $requestXml): self
     {
         $this->requestXml = $requestXml;
+        return $this;
+    }
+    public function getBrowserPostUrl(): ?string
+    {
+        return $this->browserPostUrl;
+    }
+
+    public function setBrowserPostUrl(string $browserPostUrl): self
+    {
+        $this->browserPostUrl = $browserPostUrl;
         return $this;
     }
 

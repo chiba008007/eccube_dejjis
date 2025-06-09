@@ -26,7 +26,9 @@ class PunchoutSessionServiceTest extends TestCase
         // パラメータ例
         $params = [
             'buyer_cookie' => 'cookie',
+            'session_id' => bin2hex(random_bytes(16)),
             'request_xml' => '<xml></xml>',
+            'browser_post_url' => 'http://www.xxx.jp',
             'user_email' => 'test@example.com',
             'user_first_name' => '太郎',
             'user_last_name' => '千葉',

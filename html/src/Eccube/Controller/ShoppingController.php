@@ -399,6 +399,7 @@ class ShoppingController extends AbstractShoppingController
      */
     public function checkout(Request $request)
     {
+
         // ログイン状態のチェック.
         if ($this->orderHelper->isLoginRequired()) {
             log_info('[注文処理] 未ログインもしくはRememberMeログインのため, ログイン画面に遷移します.');
@@ -414,6 +415,17 @@ class ShoppingController extends AbstractShoppingController
 
             return $this->redirectToRoute('shopping_error');
         }
+
+
+
+        // テスト用
+        log_info('[テスト注文処理] 注文処理を開始します.', [$Order->getId()]);
+        $this->eventDispatcher->dispatch(
+            new EventArgs(['Order' => $Order], $request),
+            EccubeEvents::FRONT_SHOPPING_ORDER_COMPLETE
+        );
+        dd("テスト用で処理を止めておく");
+
 
         // フォームの生成.
         $form = $this->createForm(OrderType::class, $Order, [
@@ -557,6 +569,14 @@ class ShoppingController extends AbstractShoppingController
         $hasNextCart = !empty($this->cartService->getCarts());
 
         log_info('[注文完了] 注文完了画面を表示しました. ', [$hasNextCart]);
+
+
+        // 注文完了画面でのイベントフックの追加
+        $this->eventDispatcher->dispatch(
+            new EventArgs(['Order' => $Order], $request),
+            EccubeEvents::FRONT_SHOPPING_ORDER_COMPLETE
+        );
+
 
         return [
             'Order' => $Order,
@@ -855,17 +875,26 @@ class ShoppingController extends AbstractShoppingController
 
             // forwardすることも可能.
             if ($dispatcher->isForward()) {
-                log_info('[注文処理] PaymentMethod::applyによりForwardします.',
-                    [$dispatcher->getRoute(), $dispatcher->getPathParameters(), $dispatcher->getQueryParameters()]);
+                log_info(
+                    '[注文処理] PaymentMethod::applyによりForwardします.',
+                    [$dispatcher->getRoute(), $dispatcher->getPathParameters(), $dispatcher->getQueryParameters()]
+                );
 
-                return $this->forwardToRoute($dispatcher->getRoute(), $dispatcher->getPathParameters(),
-                    $dispatcher->getQueryParameters());
+                return $this->forwardToRoute(
+                    $dispatcher->getRoute(),
+                    $dispatcher->getPathParameters(),
+                    $dispatcher->getQueryParameters()
+                );
             } else {
-                log_info('[注文処理] PaymentMethod::applyによりリダイレクトします.',
-                    [$dispatcher->getRoute(), $dispatcher->getPathParameters(), $dispatcher->getQueryParameters()]);
+                log_info(
+                    '[注文処理] PaymentMethod::applyによりリダイレクトします.',
+                    [$dispatcher->getRoute(), $dispatcher->getPathParameters(), $dispatcher->getQueryParameters()]
+                );
 
-                return $this->redirectToRoute($dispatcher->getRoute(),
-                    array_merge($dispatcher->getPathParameters(), $dispatcher->getQueryParameters()));
+                return $this->redirectToRoute(
+                    $dispatcher->getRoute(),
+                    array_merge($dispatcher->getPathParameters(), $dispatcher->getQueryParameters())
+                );
             }
         }
     }

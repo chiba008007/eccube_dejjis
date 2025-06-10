@@ -113,6 +113,13 @@ class ProductController extends AbstractController
      */
     public function index(Request $request, PaginatorInterface $paginator)
     {
+        $sessionIdFromUrl = $request->query->get('session_id');
+        if ($sessionIdFromUrl) {
+            // Symfonyのセッションへ保存
+            log_info('Symfonyのセッションへ保存');
+            $request->getSession()->set('punchout_session_id', $sessionIdFromUrl);
+        }
+
         // Doctrine SQLFilter
         if ($this->BaseInfo->isOptionNostockHidden()) {
             $this->entityManager->getFilters()->enable('option_nostock_hidden');

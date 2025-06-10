@@ -565,6 +565,9 @@ final class EccubeEvents
     // shippingError
     public const FRONT_SHOPPING_SHIPPING_ERROR_COMPLETE = 'front.shopping.shipping.error.complete';
 
+    // 購入完了画面
+    public const FRONT_SHOPPING_ORDER_COMPLETE = 'front.shopping.order.complete';
+
     /**
      * UserDataController
      */

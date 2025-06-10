@@ -74,6 +74,13 @@ services:
     Customize\:
         resource: "../../../app/Customize/*"
         exclude: "../../../app/Customize/{Entity,Resource,Tests}"
+
+    Customize\EventListener\OrderCompleteListener:
+        arguments:
+            $logger: '@monolog.logger.front'
+        tags:
+            - { name: kernel.event_subscriber }
+
     Customize\Controller\:
         resource: "../../../app/Customize/Controller"
         tags: ["controller.service_arguments"]

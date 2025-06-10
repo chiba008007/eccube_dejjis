@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     name="dtb_punchout_session",
  *     uniqueConstraints={@ORM\UniqueConstraint(name="UNIQ_punchout_session_buyer_cookie", columns={"buyer_cookie"})}
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Customize\Repository\DtbPunchoutSessionRepository")
  */
 class DtbPunchoutSession
 {

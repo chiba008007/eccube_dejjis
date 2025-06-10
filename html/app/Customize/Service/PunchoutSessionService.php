@@ -5,6 +5,7 @@ namespace Customize\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Customize\Entity\DtbPunchoutSession;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PunchoutSessionService
 {
@@ -12,19 +13,24 @@ class PunchoutSessionService
 
     private LoggerInterface $logger;
 
+    private $requestStack;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, RequestStack $requestStack)
     {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
+        $this->requestStack = $requestStack;
     }
 
     public function createSession(array $params): bool
     {
         try {
             $session = new DtbPunchoutSession();
+            // テスト用でtime()をつけている
             $session->setBuyerCookie($params['buyer_cookie'].time());
+            $session->setSessionId($params['session_id']);
             $session->setRequestXml($params['request_xml']);
+            $session->setBrowserPostUrl($params['browser_post_url']);
             $session->setUserEmail($params['user_email'] ?? null);
             $session->setUserFirstName($params['user_first_name'] ?? null);
             $session->setUserLastName($params['user_last_name'] ?? null);
@@ -46,5 +52,29 @@ class PunchoutSessionService
             $this->logger->debug('登録処理失敗'.$e);
             return false;
         }
+    }
+
+    public function replacePlaceholder($template, $sessionId)
+    {
+
+        $request = $this->requestStack->getCurrentRequest();
+        $host = $request->getHost();        // 例: example.com
+        $scheme = $request->getScheme();    // 例: http または https
+        $domain = $scheme . '://' . $host;
+
+        $payloadId = date('Ymd\THis') . '-' . uniqid() . '@buyer.com';
+        $timestamp = (new \DateTime())->format('c');
+        $startUrl = $domain."/punchout/session/{$sessionId}";
+
+        return str_replace(
+            ['{{payload_id}}', '{{timestamp}}', '{{start_url}}'],
+            [$payloadId, $timestamp, $startUrl],
+            $template
+        );
+    }
+
+    public function findBySessionId($sessionId): ?DtbPunchoutSession
+    {
+        return $this->entityManager->getRepository(DtbPunchoutSession::class)->findOneBy([ 'sessionId' => $sessionId ]);
     }
 }

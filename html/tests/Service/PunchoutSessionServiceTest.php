@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Customize\Service\PunchoutSessionService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class PunchoutSessionServiceTest extends TestCase
 {
@@ -20,13 +21,17 @@ class PunchoutSessionServiceTest extends TestCase
         // Loggerのモック
         $logger = $this->createMock(LoggerInterface::class);
 
+        $requestStack = $this->createMock(RequestStack::class);
+
         // serviceのインスタンス生成
-        $service = new PunchoutSessionService($entityManager, $logger);
+        $service = new PunchoutSessionService($entityManager, $logger, $requestStack);
 
         // パラメータ例
         $params = [
             'buyer_cookie' => 'cookie',
+            'session_id' => bin2hex(random_bytes(16)),
             'request_xml' => '<xml></xml>',
+            'browser_post_url' => 'http://www.xxx.jp',
             'user_email' => 'test@example.com',
             'user_first_name' => '太郎',
             'user_last_name' => '千葉',
@@ -54,7 +59,9 @@ class PunchoutSessionServiceTest extends TestCase
         $logger = $this->createMock(LoggerInterface::class);
         $logger->expects($this->once())->method('debug')->with($this->stringContains('登録処理失敗'));
 
-        $service = new PunchoutSessionService($entityManager, $logger);
+        $requestStack = $this->createMock(RequestStack::class);
+
+        $service = new PunchoutSessionService($entityManager, $logger, $requestStack);
 
         $params = [
             'buyer_cookie' => 'cookie',

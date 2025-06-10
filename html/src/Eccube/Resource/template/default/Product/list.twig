@@ -103,6 +103,13 @@ file that was distributed with this source code.
             <p class="errormsg text-danger">{{ 'front.product.search__category_not_found'|trans }}</p>
         </div>
     {% else %}
+
+        {% if app.request.get('_punchout') %}
+            <div class="alert alert-info">
+                PunchOutモードで商品を閲覧中です。
+            </div>
+        {% endif %}
+
         <div class="ec-searchnavRole">
             <form name="form1" id="form1" method="get" action="?">
                 {% for item in search_form %}

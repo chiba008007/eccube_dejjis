@@ -15,6 +15,7 @@ class PunchiOutSetUpResponseTest extends TestCase
         $request = __DIR__ . '/../../mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml';
         $path = __DIR__ . '/../../mockdata/mock-cxml-api-response-PunchOutSetupResponse.xml';
         $stubResponseXml = file_get_contents($path);
+        $stubResponseXml = str_replace('{{start_url}}', 'https://www.amazon.com/b2b/punchout/session/abcdef123456', $stubResponseXml);
         $mockResponse = $this->createMock(ResponseInterface::class);
         $mockResponse->method('getContent')->willReturn($stubResponseXml);
 
@@ -23,6 +24,8 @@ class PunchiOutSetUpResponseTest extends TestCase
 
         $service = new AmazonApiServiceConnect($mockClient);
         $result = $service->getApiResponse($request, "http://mock-api-server:3456/punchOutSetupRequest2");
+
+
 
         $this->assertSame('https://www.amazon.com/b2b/punchout/session/abcdef123456', (string) $result->Response->PunchOutSetupResponse->StartPage->URL);
         $this->assertSame('Success', (string) $result->Response->Status);

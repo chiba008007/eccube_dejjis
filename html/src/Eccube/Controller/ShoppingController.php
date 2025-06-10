@@ -416,17 +416,6 @@ class ShoppingController extends AbstractShoppingController
             return $this->redirectToRoute('shopping_error');
         }
 
-
-
-        // テスト用
-        log_info('[テスト注文処理] 注文処理を開始します.', [$Order->getId()]);
-        $this->eventDispatcher->dispatch(
-            new EventArgs(['Order' => $Order], $request),
-            EccubeEvents::FRONT_SHOPPING_ORDER_COMPLETE
-        );
-        dd("テスト用で処理を止めておく");
-
-
         // フォームの生成.
         $form = $this->createForm(OrderType::class, $Order, [
             // 確認画面から注文処理へ遷移する場合は, Orderエンティティで値を引き回すためフォーム項目の定義をスキップする.

@@ -46,6 +46,7 @@ class OrderCompleteListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $session = $request->getSession();
         $punchoutSessionId = $session->get('punchout_session_id');
+        $this->logger->info("セッションID", [ 'sessionID' => $punchoutSessionId ]);
         if (empty($punchoutSessionId)) {
             $this->logger->warning('PunchOutセッションIDが取得できませんでした。処理を中断します。');
             return;

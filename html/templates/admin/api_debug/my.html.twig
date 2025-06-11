@@ -8,6 +8,12 @@
 
 <p><strong>現在のモード：</strong>{{ mode }}</p>
 <p><strong>リクエスト先：</strong>{{ url }}</p>
+<select id="url">
+    <option value="1" {{ app.request.get('url') == '1' ? 'selected' : '' }} >http://localhost/api/mock/punchout/PunchOutSetupRequest/PunchOutSetupResponse</option>
+    <option value="2" {{ app.request.get('url') == '2' ? 'selected' : '' }} >http://localhost/api/mock/punchout/OrderRequest</option>
+</select>
+<br />
+<br />
 <button id="sendRequestBtn" class="btn btn-primary">XMLを読み込んで送信</button>
 
 <p><strong>レスポンスXml：</strong></p>
@@ -19,6 +25,13 @@
 
 
 <script type="text/javascript">
+document.getElementById("url").addEventListener('change',function(){
+    let uri = new URL(window.location.href);
+    let url = uri.origin;
+    let pathname = uri.pathname;
+    let value = this.value;
+    location.href= url+pathname+"/?url="+value;
+});
 document.getElementById('sendRequestBtn').addEventListener('click', function () {
     // XMLファイルを取得してそのまま送信
     fetch(`{{ request_body_web_path }}`)

@@ -209,6 +209,7 @@ class OrderCompleteListener implements EventSubscriberInterface
 
         // POST送信
         try {
+            $this->logger->error('PunchOutOrderMessage送信成功', ['xml' => $xml]);
             $client = new \GuzzleHttp\Client();
             $client->post($postUrl, [
                 'headers' => ['Content-Type' => 'application/xml'],

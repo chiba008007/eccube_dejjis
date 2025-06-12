@@ -7,6 +7,13 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Customize\Service\PunchoutSessionService;
+use Customize\Service\AmazonOrderRequest;
+use Customize\Service\AmazonOrderRequestItem;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Psr\Log\LoggerInterface;
+
+use function PHPUnit\Framework\throwException;
 
 class PunchOutController extends AbstractController
 {
@@ -71,4 +78,94 @@ XML;
             return new Response($responseXml, 200, ['Content-Type' => 'application/xml']);
         }
     }
+
+
+    /**
+     * @Route("/api/mock/punchout/orderRequest", name="mock_orderRequest_setup", methods={"POST","GET"})
+    */
+    // ①OrderRequest
+    public function PunchOutOrderRequest(
+        Request $request,
+        AmazonOrderRequest $amazonOrder,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger
+    ): Response {
+        $entityManager->getConnection()->beginTransaction();
+        $logger->info('OrderRequest登録処理開始');
+        try {
+            $xml = $request->getContent();
+            $fileXml = simplexml_load_string($xml);
+            $params = [
+              "payload_id" => (string)$fileXml['payloadID'],
+              "order_id" => (string)$fileXml->Request->OrderRequest->OrderRequestHeader[ 'orderID' ],
+              "buyer_id" => (string)$fileXml->Header->From->Credential->Identity,
+              "total_amount" => (string)$fileXml->Request->OrderRequest->OrderRequestHeader->Total->Money,
+              "currency" => (string)$fileXml->Request->OrderRequest->OrderRequestHeader->Total->Money[ 'currency' ],
+              "status" => "new",
+              "raw_cxml" => $fileXml->asXML(),
+            ];
+            $logger->info('OrderRequest登録処理', ['params' => $params]);
+
+            $amazon = $amazonOrder->createSession($params);
+            if ($amazon) {
+                $itemParamsList = $fileXml->Request->OrderRequest->ItemOut;
+                foreach ($itemParamsList as $itemParams) {
+
+                    $itemService = new AmazonOrderRequestItem($entityManager, $logger);
+                    $params = [
+                      "line_number" => (string)$itemParams['lineNumber'],
+                      "supplier_part_id" => (string)$itemParams->ItemID->SupplierPartID,
+                      "supplier_part_auxiliary_id" => (string)$itemParams->ItemID->SupplierPartAuxiliaryID,
+                      "quantity" => (string)$itemParams['quantity'],
+                      "unit_price" => (string)$fileXml->Request->OrderRequest->ItemOut->ItemDetail->UnitPrice->Money,
+                      "description" => (string)$fileXml->Request->OrderRequest->ItemOut->ItemDetail->Description,
+                      "manufacturer_part_id" => (string)$fileXml->Request->OrderRequest->ItemOut->ItemDetail->ManufacturerPartID,
+                      "manufacturer_name" => (string)$fileXml->Request->OrderRequest->ItemOut->ItemDetail->ManufacturerName,
+                      "category" => (string)$fileXml->Request->OrderRequest->ItemOut->Tax->TaxDetail['category'],
+                      "sub_category" => $itemService->getSubCategory($itemParams, "subCategory"),
+                      "item_condition" => $itemService->getSubCategory($itemParams, "itemCondition"),
+                      "detail_page_url" => $itemService->getSubCategory($itemParams, "detailPageURL"),
+                      "ean" => $itemService->getSubCategory($itemParams, "ean"),
+                      "preference" => $itemService->getSubCategory($itemParams, "preference"),
+
+                      "request" => $amazon
+                    ];
+                    $logger->info('OrderRequestアイテム登録', ['params' => $params]);
+                    $itemService->createSession($params);
+                }
+                $logger->info('OrderRequest登録終了');
+                $entityManager->flush();
+
+            } else {
+                $logger->error('OrderRequest登録失敗', ['params' => $params]);
+
+                throwException(new \Exception('REGIST FALSE'));
+            }
+
+            $responseXml = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<cXML payloadID="ok" timestamp="">
+  <Response>
+    <Status code="200" text="OK" >Success</Status>
+  </Response>
+</cXML>
+XML;
+            $entityManager->getConnection()->commit();
+            return new Response($responseXml, 200, ['Content-Type' => 'application/xml']);
+
+        } catch (\Exception $e) {
+            // エラーの時のxmlを返す
+            $errorXml = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<cXML payloadID="error" timestamp="">
+  <Response>
+    <Status code="500" text="Internal Server Error">{{$e}}</Status>
+  </Response>
+</cXML>
+XML;
+            $entityManager->getConnection()->rollBack();
+            return new Response($errorXml, 500, ['Content-Type' => 'application/xml']);
+        }
+    }
+
 }

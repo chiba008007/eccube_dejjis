@@ -38,14 +38,17 @@ class MyApiDebugController extends AbstractController
     {
         $mode = getenv('API_MODE') ?: 'unknown';
         $this->logger->debug('APIデバック処理の開始', ['method' => __METHOD__]);
-
-
-        // ①PunchOutSetupRequestから②PunchOutSetupResponse
-        $url = "http://localhost/api/mock/punchout/PunchOutSetupRequest/PunchOutSetupResponse";
-        $requestBodyServerPath = "/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml"; // サーバー用
-        $requestBodyWebPath = "/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml"; // クライアント用（Webブラウザからの相対URL）
+        if ($request->query->get('url') == 2) {
+            $url = "http://localhost/api/mock/punchout/orderRequest";
+            $requestBodyServerPath = "/var/www/html/mockdata/mock-cxml-api-orderRequest.xml"; // サーバー用
+            $requestBodyWebPath = "/mockdata/mock-cxml-api-orderRequest.xml"; // クライアント用（Webブラウザからの相対URL）
+        } else {
+            // ①PunchOutSetupRequestから②PunchOutSetupResponse
+            $url = "http://localhost/api/mock/punchout/PunchOutSetupRequest/PunchOutSetupResponse";
+            $requestBodyServerPath = "/var/www/html/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml"; // サーバー用
+            $requestBodyWebPath = "/mockdata/mock-cxml-api-request-PunchOutSetupRequest.xml"; // クライアント用（Webブラウザからの相対URL）
+        }
         $requestBody = file_get_contents($requestBodyServerPath);
-
         return $this->render('/admin/api_debug/my.html.twig', [
             "mode" => $mode,
             "url" => $url,

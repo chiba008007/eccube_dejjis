@@ -46,6 +46,7 @@ class OrderCompleteListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $session = $request->getSession();
         $punchoutSessionId = $session->get('punchout_session_id');
+        $this->logger->info("セッションID", [ 'sessionID' => $punchoutSessionId ]);
         if (empty($punchoutSessionId)) {
             $this->logger->warning('PunchOutセッションIDが取得できませんでした。処理を中断します。');
             return;
@@ -208,6 +209,7 @@ class OrderCompleteListener implements EventSubscriberInterface
 
         // POST送信
         try {
+            $this->logger->error('PunchOutOrderMessage送信成功', ['xml' => $xml]);
             $client = new \GuzzleHttp\Client();
             $client->post($postUrl, [
                 'headers' => ['Content-Type' => 'application/xml'],

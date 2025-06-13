@@ -11,6 +11,7 @@
 <select id="url">
     <option value="1" {{ app.request.get('url') == '1' ? 'selected' : '' }} >http://localhost/api/mock/punchout/PunchOutSetupRequest/PunchOutSetupResponse</option>
     <option value="2" {{ app.request.get('url') == '2' ? 'selected' : '' }} >http://localhost/api/mock/punchout/OrderRequest</option>
+    <option value="3" {{ app.request.get('url') == '3' ? 'selected' : '' }} >http://localhost/api/mock/punchout/ConfirmationRequest</option>
 </select>
 <br />
 <br />

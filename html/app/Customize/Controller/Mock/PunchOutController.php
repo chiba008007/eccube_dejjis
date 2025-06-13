@@ -2,6 +2,9 @@
 
 namespace Customize\Controller\Mock;
 
+use Customize\Entity\AmazonOrderConfirmationItems;
+use Customize\Service\AmazonOrderConfirmation;
+use Customize\Service\AmazonOrderConfirmationItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -83,7 +86,7 @@ XML;
     /**
      * @Route("/api/mock/punchout/orderRequest", name="mock_orderRequest_setup", methods={"POST","GET"})
     */
-    // ①OrderRequest
+    // ④OrderRequest
     public function PunchOutOrderRequest(
         Request $request,
         AmazonOrderRequest $amazonOrder,
@@ -168,4 +171,85 @@ XML;
         }
     }
 
+    /**
+     * @Route("/api/mock/punchout/ConfirmationRequest", name="mock_ConfirmationRequest_setup", methods={"POST","GET"})
+    */
+    // ④OrderRequest
+    public function ConfirmationRequest(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        AmazonOrderConfirmation $amazonConf
+    ): Response {
+        $entityManager->getConnection()->beginTransaction();
+        $logger->info('OrderConfirmationRequest登録処理開始');
+        try {
+            $xml = $request->getContent();
+            $fileXml = simplexml_load_string($xml);
+            $ns = $fileXml->children();
+            $params = [
+              // テスト用にtimeをつけている
+              "confirm_id" => (string) $ns->Request->ConfirmationRequest->ConfirmationHeader['confirmID'].time(),
+              "order_id" => (string) $fileXml->Request->ConfirmationRequest->OrderReference['orderID'],
+              "notice_date" => (string) $ns->Request->ConfirmationRequest->ConfirmationHeader['noticeDate'],
+              "total_amount" => (string) $fileXml->Request->ConfirmationRequest->ConfirmationHeader->Total->Money,
+              "total_tax" => (string) $fileXml->Request->ConfirmationRequest->ConfirmationHeader->Tax->Money,
+              "total_shipping" => (string) $fileXml->Request->ConfirmationRequest->ConfirmationHeader->Shipping->Money,
+              "raw_cxml" => $fileXml->asXML(),
+            ];
+            $amazon = $amazonConf->createSession($params);
+
+            if (!$amazon) {
+                $logger->error('OrderConfirmationRequest登録失敗', ['params' => $params]);
+                throwException(new \Exception('REGIST FALSE'));
+            }
+            $itemParamsList = $fileXml->Request->ConfirmationRequest->ConfirmationItem;
+            foreach ($itemParamsList as $itemParams) {
+                $itemService = new AmazonOrderConfirmationItem($entityManager, $logger);
+                $params = [
+                  "line_number" => (string)$itemParams['lineNumber'],
+                  "quantity" => (string)$itemParams->ConfirmationStatus['quantity'],
+                  "unit_of_measure" => (string)$itemParams->UnitOfMeasure,
+                  "tax" => (string)$itemParams->ConfirmationStatus->Tax->Money,
+                  "tax_rate" => (string)$itemParams->ConfirmationStatus->Tax->TaxDetail['percentageRate'],
+                  "shipping" => (string)$itemParams->ConfirmationStatus->Shipping->Money,
+                  "description" => (string)$itemParams->ConfirmationStatus->Tax->Description,
+                  "comments" => (string)$itemParams->ConfirmationStatus->Comments,
+                  "request" => $amazon
+                ];
+                $itemService->createSession($params);
+            }
+            $logger->info('OrderConfirmationRequest登録終了');
+            $entityManager->flush();
+
+
+            $responseXml = <<<XML
+            <?xml version="1.0" encoding="UTF-8"?>
+            <cXML payloadID="ok" timestamp="">
+              <Response>
+                <Status code="200" text="OK" >Success</Status>
+              </Response>
+            </cXML>
+            XML;
+
+
+            $logger->info('OrderRequest登録処理成功');
+
+            $entityManager->getConnection()->commit();
+            return new Response($responseXml, 200, ['Content-Type' => 'application/xml']);
+
+        } catch (\Exception $e) {
+            $logger->info('OrderRequest登録処理失敗', ["error" => $e]);
+            $errorXml = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<cXML payloadID="error" timestamp="">
+  <Response>
+    <Status code="500" text="Internal Server Error">{{$e}}</Status>
+  </Response>
+</cXML>
+XML;
+            $entityManager->getConnection()->rollBack();
+            return new Response($errorXml, 500, ['Content-Type' => 'application/xml']);
+        }
+    }
 }

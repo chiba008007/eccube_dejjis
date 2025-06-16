@@ -38,7 +38,11 @@ class MyApiDebugController extends AbstractController
     {
         $mode = getenv('API_MODE') ?: 'unknown';
         $this->logger->debug('APIデバック処理の開始', ['method' => __METHOD__]);
-        if ($request->query->get('url') == 3) {
+        if ($request->query->get('url') == 4) {
+            $url = "http://localhost/api/mock/punchout/ShipmentNotice";
+            $requestBodyServerPath = "/var/www/html/mockdata/mock-cxml-api-shipmentNotice.xml"; // サーバー用
+            $requestBodyWebPath = "/mockdata/mock-cxml-api-shipmentNotice.xml"; // クライアント用（Webブラウザからの相対URL）
+        } elseif ($request->query->get('url') == 3) {
             $url = "http://localhost/api/mock/punchout/ConfirmationRequest";
             $requestBodyServerPath = "/var/www/html/mockdata/mock-cxml-api-orderConfirmation.xml"; // サーバー用
             $requestBodyWebPath = "/mockdata/mock-cxml-api-orderConfirmation.xml"; // クライアント用（Webブラウザからの相対URL）

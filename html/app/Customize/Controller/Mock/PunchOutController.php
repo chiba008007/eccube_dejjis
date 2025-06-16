@@ -2,7 +2,8 @@
 
 namespace Customize\Controller\Mock;
 
-use Customize\Entity\AmazonOrderConfirmationItems;
+use Customize\Service\AmazonShipmentNotice;
+use Customize\Service\AmazonShipmentNoticeItem;
 use Customize\Service\AmazonOrderConfirmation;
 use Customize\Service\AmazonOrderConfirmationItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -67,13 +68,13 @@ class PunchOutController extends AbstractController
         if (!$success) {
             // エラーの時のxmlを返す
             $errorXml = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<cXML payloadID="error" timestamp="{$params['start_date']}">
-  <Response>
-    <Status code="500" text="Internal Server Error">PunchOut session registration failed.</Status>
-  </Response>
-</cXML>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <cXML payloadID="error" timestamp="{$params['start_date']}">
+              <Response>
+                <Status code="500" text="Internal Server Error">PunchOut session registration failed.</Status>
+              </Response>
+            </cXML>
+            XML;
             return new Response($errorXml, 500, ['Content-Type' => 'application/xml']);
         } else {
             $responseXml = file_get_contents("/var/www/html/mockdata/mock-cxml-api-response-PunchOutSetupResponse.xml");
@@ -146,26 +147,26 @@ XML;
             }
 
             $responseXml = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<cXML payloadID="ok" timestamp="">
-  <Response>
-    <Status code="200" text="OK" >Success</Status>
-  </Response>
-</cXML>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <cXML payloadID="ok" timestamp="">
+              <Response>
+                <Status code="200" text="OK" >Success</Status>
+              </Response>
+            </cXML>
+            XML;
             $entityManager->getConnection()->commit();
             return new Response($responseXml, 200, ['Content-Type' => 'application/xml']);
 
         } catch (\Exception $e) {
             // エラーの時のxmlを返す
             $errorXml = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<cXML payloadID="error" timestamp="">
-  <Response>
-    <Status code="500" text="Internal Server Error">{{$e}}</Status>
-  </Response>
-</cXML>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <cXML payloadID="error" timestamp="">
+              <Response>
+                <Status code="500" text="Internal Server Error">{{$e}}</Status>
+              </Response>
+            </cXML>
+            XML;
             $entityManager->getConnection()->rollBack();
             return new Response($errorXml, 500, ['Content-Type' => 'application/xml']);
         }
@@ -174,7 +175,7 @@ XML;
     /**
      * @Route("/api/mock/punchout/ConfirmationRequest", name="mock_ConfirmationRequest_setup", methods={"POST","GET"})
     */
-    // ④OrderRequest
+    // ⑤orderconfirmation
     public function ConfirmationRequest(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -241,13 +242,87 @@ XML;
         } catch (\Exception $e) {
             $logger->info('OrderRequest登録処理失敗', ["error" => $e]);
             $errorXml = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<cXML payloadID="error" timestamp="">
-  <Response>
-    <Status code="500" text="Internal Server Error">{{$e}}</Status>
-  </Response>
-</cXML>
-XML;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <cXML payloadID="error" timestamp="">
+              <Response>
+                <Status code="500" text="Internal Server Error">{{$e}}</Status>
+              </Response>
+            </cXML>
+            XML;
+            $entityManager->getConnection()->rollBack();
+            return new Response($errorXml, 500, ['Content-Type' => 'application/xml']);
+        }
+    }
+
+    /**
+     * @Route("/api/mock/punchout/ShipmentNotice", name="mock_ShipmentNotice_setup", methods={"POST","GET"})
+     */
+    // ⑥ ShipmentNotice
+    public function ShipmentNotice(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        AmazonShipmentNotice $amazonShip
+    ): Response {
+        $entityManager->getConnection()->beginTransaction();
+        $logger->info('ShipmentNotice登録処理開始');
+        try {
+            $xml = $request->getContent();
+            $fileXml = simplexml_load_string($xml);
+            $params = [
+              // テスト用のためtimeをつけている
+              "shipment_id" => (string)$fileXml->Request->ShipNoticeRequest->ShipNoticeHeader[ 'shipmentID' ].time(),
+              "order_id" => (string)$fileXml->Request->ShipNoticeRequest->ShipNoticePortion->OrderReference[ 'orderID' ],
+              "notice_date" => (string)$fileXml->Request->ShipNoticeRequest->ShipNoticeHeader[ 'noticeDate' ],
+              "shipment_date" => (string)$fileXml->Request->ShipNoticeRequest->ShipNoticeHeader[ 'shipmentDate' ],
+              "delivery_date" => (string)$fileXml->Request->ShipNoticeRequest->ShipNoticeHeader[ 'deliveryDate' ],
+              "shipment_type" => (string)$fileXml->Request->ShipNoticeRequest->ShipNoticeHeader[ 'shipmentType' ],
+              "carrier_name" => (string)$fileXml->Request->ShipNoticeRequest->ShipControl->CarrierIdentifier,
+              "tracking_number" => (string)$fileXml->Request->ShipNoticeRequest->ShipControl->ShipmentIdentifier,
+              "package_range_begin" => (string)$fileXml->Request->ShipNoticeRequest->ShipControl->PackageIdentification['rangeBegin'],
+              "package_range_end" => (string)$fileXml->Request->ShipNoticeRequest->ShipControl->PackageIdentification['rangeEnd'],
+              "payload_id" => (string)$fileXml->Request->ShipNoticeRequest->ShipNoticePortion->OrderReference->DocumentReference[ 'payloadID' ],
+              "raw_cxml" => $fileXml->asXML(),
+            ];
+
+            $shipNoticeEntity = $amazonShip->createSession($params);
+
+            $itemParamsList = $fileXml->Request->ShipNoticeRequest->ShipNoticePortion->ShipNoticeItem;
+            foreach ($itemParamsList as $itemParams) {
+                $itemService = new AmazonShipmentNoticeItem($entityManager, $logger);
+                $params = [
+                  "line_number" => (string)$itemParams['lineNumber'],
+                  "quantity" => (string)$itemParams['quantity'],
+                  "unit_of_measure" => (string)$itemParams->UnitOfMeasure,
+                  "request" => $shipNoticeEntity,
+                ];
+                $itemService->createSession($params);
+            }
+
+            $logger->info('ShipmentNotice登録終了');
+            $entityManager->flush();
+
+            $responseXml = <<<XML
+            <?xml version="1.0" encoding="UTF-8"?>
+            <cXML payloadID="ok" timestamp="">
+              <Response>
+                <Status code="200" text="OK" >Success</Status>
+              </Response>
+            </cXML>
+            XML;
+            $logger->info('ShipmentNotice登録処理成功');
+            $entityManager->getConnection()->commit();
+            return new Response($responseXml, 200, ['Content-Type' => 'application/xml']);
+        } catch (\Exception $e) {
+            $logger->info('ShipmentNotice登録処理失敗', ["error" => $e]);
+            $errorXml = <<<XML
+            <?xml version="1.0" encoding="UTF-8"?>
+            <cXML payloadID="error" timestamp="">
+              <Response>
+                <Status code="500" text="Internal Server Error">{{$e}}</Status>
+              </Response>
+            </cXML>
+            XML;
             $entityManager->getConnection()->rollBack();
             return new Response($errorXml, 500, ['Content-Type' => 'application/xml']);
         }

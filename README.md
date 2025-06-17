@@ -196,3 +196,30 @@ php bin/console doctrine:migrations:migrate
   1. .github/workflows/test.ymlに記載しているためgithubにコミットしたタイミングで実行
   2. コマンドで実行
   `docker exec -it php8 php bin/phpunit -c /var/www/html/phpunit.custom.xml`
+
+
+
+# localstack
+
+## dockerで実行
+`docker run --rm -it -p 4566:4566 -e SERVICES=s3 localstack/localstack`
+
+##  ローカルのテキストファイルをアップロード
+```
+echo "こんにちは LocalStack!" > test.txt
+aws --endpoint-url=http://localhost:4566 s3 cp test.txt s3://my-bucket/
+aws --endpoint-url=http://localhost:4566 s3 ls s3://my-bucket/ ← 確認
+```
+
+## エンドポイントの作成
+aws --endpoint-url=http://localhost:4566 s3 cp test.txt s3://my-bucket/
+upload: ./test.txt to s3://my-bucket/test.txt
+
+## ページが確認できた
+http://localhost:4566/my-test-bucket/test.txt
+
+```
+presign URL は「バケット名」「ファイル名」「認証情報」「有効期限」を含んだ一時的な署名付きURLなので、
+バケット名を変えたら新しく作り直す必要があります。
+LocalStack を再起動するたびに、バケットやファイルも消える仕様です。
+```

@@ -8,3 +8,4 @@ html/.phpunit.result.cache
 /html/composer.lock
 /html/vendor/
 /html/app/Plugin/*
+/aws/

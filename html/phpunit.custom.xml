@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!-- https://phpunit.readthedocs.io/en/latest/configuration.html -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-         backupGlobals="false"
-         colors="true"
-         bootstrap="tests/bootstrap.php"
-         convertDeprecationsToExceptions="false"
+<phpunit
+    backupGlobals="false"
+    colors="true"
+    bootstrap="tests/bootstrap.php"
+    convertDeprecationsToExceptions="false"
+    outputBuffering="false"
 >
     <php>
         <ini name="display_errors" value="1" />
@@ -36,7 +36,6 @@
     </coverage>
 
     <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
         <listener class="\DAMA\DoctrineTestBundle\PHPUnit\PHPUnitListener" />
     </listeners>
 

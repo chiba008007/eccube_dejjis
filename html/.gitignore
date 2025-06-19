@@ -40,12 +40,6 @@ node_modules
 .env
 .maintenance
 *.neon
-
-###> symfony/phpunit-bridge ###
-.phpunit
-/phpunit.xml
-###< symfony/phpunit-bridge ###
-
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.cache
 /.php-cs-fixer.*.php

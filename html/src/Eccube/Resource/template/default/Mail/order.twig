@@ -70,7 +70,7 @@ file that was distributed with this source code.
 会社名：{{ Order.company_name }}
 {% endif %}
 郵便番号：〒{{ Order.postal_code }}
-住所：{{ Order.Pref.name }}{{ Order.addr01 }}{{ Order.addr02 }}
+住所：{{ Order.Pref ? Order.Pref.name : '' }}{{ Order.addr01 }}{{ Order.addr02 }}
 電話番号：{{ Order.phone_number }}
 メールアドレス：{{ Order.email }}
 
@@ -87,7 +87,11 @@ file that was distributed with this source code.
 会社名：{{ Shipping.company_name }}
 {% endif %}
 郵便番号：〒{{ Shipping.postal_code }}
-住所：{{ Shipping.Pref.name }}{{ Shipping.addr01 }}{{ Shipping.addr02 }}
+住所：
+{% if Shipping.Pref %}
+    {{ Shipping.Pref.name }}
+{% endif %}
+{{ Shipping.addr01 }}{{ Shipping.addr02 }}
 電話番号：{{ Shipping.phone_number }}
 
 配送方法：{{ Shipping.shipping_delivery_name }}

@@ -208,3 +208,17 @@ services:
     Customize\Validator\StartBeforeEndValidator:
         tags:
             - { name: "validator.constraint_validator" }
+    Customize\Form\Type\OrderType:
+        class: Customize\Form\Type\OrderType
+        arguments:
+            $TaxRule: '@Eccube\Repository\TaxRuleRepository'
+            $requestStack: '@request_stack'
+        tags: ['form.type']
+        public: true
+
+    Eccube\Form\Type\Shopping\OrderType:
+        alias: Customize\Form\Type\OrderType
+        public: true
+    Customize\Controller\PunchOut\:
+        resource: '%kernel.project_dir%/app/Customize/Controller/PunchOut'
+        tags: ['controller.service_arguments']

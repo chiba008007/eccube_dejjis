@@ -9,3 +9,4 @@ html/.phpunit.result.cache
 /html/vendor/
 /html/app/Plugin/*
 /aws/
+/html/app/template/default/*

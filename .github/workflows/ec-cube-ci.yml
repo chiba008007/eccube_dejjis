@@ -46,6 +46,10 @@ jobs:
         working-directory: ./html
         run: php bin/console eccube:install --no-interaction
 
+      - name: Install EC-CUBE Plugin
+        working-directory: ./html
+        run: php bin/console eccube:composer:require ec-cube/twofactorauthcustomer42
+
       - name: Clear cache after install
         working-directory: ./html
         run: php bin/console cache:clear

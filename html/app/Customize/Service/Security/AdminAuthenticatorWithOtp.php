@@ -2,6 +2,7 @@
 
 namespace Customize\Service\Security;
 
+use Composer\Downloader\TransportException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\RouterInterface;
@@ -22,6 +23,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
+use Doctrine\ORM\EntityManagerInterface;
+use Customize\Exception\OtpRequiredException;
 
 class AdminAuthenticatorWithOtp extends AbstractAuthenticator
 {
@@ -32,19 +35,22 @@ class AdminAuthenticatorWithOtp extends AbstractAuthenticator
     private SessionInterface $session;
     private MailerInterface $mailer;
     private UserPasswordHasherInterface $passwordHasher;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         RouterInterface $router,
         MemberRepository $memberRepository,
         SessionInterface $session,
         MailerInterface $mailer,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager
     ) {
         $this->router = $router;
         $this->memberRepository = $memberRepository;
         $this->session = $session;
         $this->mailer = $mailer;
         $this->passwordHasher = $passwordHasher;
+        $this->entityManager = $entityManager;
     }
 
     public function supports(Request $request): ?bool
@@ -64,28 +70,49 @@ class AdminAuthenticatorWithOtp extends AbstractAuthenticator
         $password = $request->request->get('password');
         $user = $this->memberRepository->findOneBy(['login_id' => $loginId]);
 
-        //if (!$user || !password_verify($password, $user->getPassword())) {
         if (!$user || !$this->passwordHasher->isPasswordValid($user, $password)) {
             throw new CustomUserMessageAuthenticationException('ログインIDまたはパスワードが間違っています。');
         }
 
         // OTPコードを生成（例: 6桁）
         $otpCode = random_int(100000, 999999);
-        $this->session->set('otp_user_id', $user->getId());
-        $this->session->set('otp_code', $otpCode);
-        $this->session->set('otp_generated_at', time());
+        $expiresAt = (new \DateTime())->modify('+5 minutes');
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
 
-        // メール送信
-        $email = (new Email())
-            ->to($user->getLoginId())
-            ->from('xxx@example.com')
-            ->subject('ECCUBE 管理画面ログイン用ワンタイムパスワード')
-            ->text("以下のコードを入力してください：\n\n{$otpCode}");
+        try {
+            $user->setAuthCode((string)$otpCode);
+            $user->setAuthCodeExpiresAt($expiresAt);
+            $user->setAuthCodeTryCount(0);
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
 
-        $this->mailer->send($email);
+            // メール送信
+            $email = (new Email())
+                ->to($user->getLoginId())
+                ->from('xxx@example.com')
+                ->subject('ECCUBE 管理画面ログイン用ワンタイムパスワード')
+                ->text("以下のコードを入力してください：\n\n{$otpCode}");
 
+            $this->mailer->send($email);
 
-        throw new CustomUserMessageAuthenticationException('otp_required');
+            $connection->commit();
+            $this->session->set('otp_user_id', $user->getId());
+            throw new OtpRequiredException();
+        } catch (OtpRequiredException $e) {
+            // これは明示的に rethrow して、下の catch に取られないようにする
+            throw $e;
+        } catch (TransportException $e) {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            throw new CustomUserMessageAuthenticationException('メール送信に失敗しました。もう一度お試しください。');
+        } catch (\Exception $e) {
+            if ($connection->isTransactionActive()) {
+                $connection->rollBack();
+            }
+            throw new CustomUserMessageAuthenticationException('システムエラーが発生しました。');
+        }
     }
 
     public function onAuthenticationSuccess(
@@ -98,7 +125,8 @@ class AdminAuthenticatorWithOtp extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        if ($exception->getMessage() === 'otp_required') {
+
+        if ($exception instanceof OtpRequiredException) {
             return new RedirectResponse($this->router->generate('admin_2fa_verify'));
         }
         return new RedirectResponse($this->router->generate('admin_login'));

@@ -9,34 +9,57 @@ use Symfony\Component\Routing\Annotation\Route;
 use Eccube\Repository\MemberRepository;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Doctrine\ORM\EntityManagerInterface;
 
 class OtpController extends AbstractController
 {
+    public $errorCount = 5; //5回間違ったらログイン画面
+
     #[Route("/%eccube_admin_route%/verify", name: "admin_2fa_verify", methods: ["GET", "POST"])]
-    public function verify(Request $request, MemberRepository $memberRepository, TokenStorageInterface $tokenStorage): Response
+    public function verify(Request $request, EntityManagerInterface $entityManager, MemberRepository $memberRepository, TokenStorageInterface $tokenStorage): Response
     {
 
         $session = $request->getSession();
         $userId = $session->get('otp_user_id');
-        $otp = $session->get('otp_code');
-        $generatedAt = $session->get('otp_generated_at');
-
-        if (!$userId || !$otp || time() - $generatedAt > 300) {
-            $this->addFlash('error', 'OTPの有効期限が切れています。');
+        if (!$userId) {
+            $this->addFlash('error', 'ログイン情報が見つかりません。');
             return $this->redirectToRoute('admin_login');
         }
 
         $user = $memberRepository->find($userId);
+        $otp = $user->getAuthCode();
+        $generatedAt = $user->getAuthCodeExpiresAt();
+        $getAuthCodeTryCount = $user->getAuthCodeTryCount();
+
+        if (new \DateTime() > $generatedAt) {
+            $this->addFlash('error', 'OTPの有効期限が切れています。');
+            return $this->redirectToRoute('admin_login');
+        }
 
         if ($request->isMethod('POST')) {
             if ($request->request->get('otp') === (string)$otp) {
                 $token = new UsernamePasswordToken($user, 'admin', $user->getRoles());
                 $tokenStorage->setToken($token);
+
+                $user->setAuthCode(null);
+                $user->setAuthCodeExpiresAt(null);
+                $user->setAuthCodeTryCount(0);
+
                 $session->remove('otp_user_id');
-                $session->remove('otp_code');
-                $session->remove('otp_generated_at');
+                $entityManager->flush();
                 return $this->redirectToRoute('admin_homepage');
             } else {
+                // 5回以上間違ったとき
+                if ($getAuthCodeTryCount >= $this->errorCount) {
+                    $user->setAuthCode(null);
+                    $user->setAuthCodeExpiresAt(null);
+                    $user->setAuthCodeTryCount(0);
+                    $entityManager->flush();
+                    $session->remove('otp_user_id');
+                    return $this->redirectToRoute('admin_login');
+                }
+                $user->setAuthCodeTryCount(($user->getAuthCodeTryCount() ?? 0) + 1);
+                $entityManager->flush();
                 $this->addFlash('error', 'OTPコードが間違っています。');
             }
         }

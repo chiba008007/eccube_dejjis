@@ -216,9 +216,39 @@ services:
         tags: ['form.type']
         public: true
 
-    Eccube\Form\Type\Shopping\OrderType:
-        alias: Customize\Form\Type\OrderType
-        public: true
+    # Eccube\Form\Type\Shopping\OrderType:
+    #     alias: Customize\Form\Type\OrderType
+    #     public: true
+
     Customize\Controller\PunchOut\:
         resource: '%kernel.project_dir%/app/Customize/Controller/PunchOut'
         tags: ['controller.service_arguments']
+
+    Customize\Service\Security\AdminAuthenticatorWithOtp:
+        arguments:
+            $router: '@router'
+            $memberRepository: '@Eccube\Repository\MemberRepository'
+            $session: '@session'
+            $mailer: '@mailer.mailer'
+        tags:
+            - { name: 'security.authenticator' }
+
+    Customize\EventListener\LoginHistoryListener:
+        class: Customize\EventListener\LoginHistoryListener
+        autowire: true
+        autoconfigure: true
+        tags:
+            - { name: kernel.event_subscriber }
+
+    Eccube\EventListener\LoginHistoryListener:
+        tags: []
+        autowire: false
+        autoconfigure: false
+
+    Eccube\Security\EntryPoint\AdminEntryPoint:
+        autowire: true
+        autoconfigure: true
+
+    Eccube\Security\AccessDeniedHandler\AdminAccessDeniedHandler:
+        autowire: true
+        autoconfigure: true

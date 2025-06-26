@@ -193,6 +193,22 @@ if (!class_exists('\Eccube\Entity\Member')) {
         private $Creator;
 
         /**
+         * @ORM\Column(name="auth_code", type="string", nullable=true)
+         */
+        private $auth_code;
+
+        /**
+         * @ORM\Column(name="auth_code_expires_at", type="datetime", nullable=true)
+         */
+        private $auth_code_expires_at;
+
+        /**
+         * @ORM\Column(name="auth_code_try_count", type="integer", options={"default": 0})
+         */
+        private $auth_code_try_count;
+
+
+        /**
          * Get id.
          *
          * @return int
@@ -599,6 +615,42 @@ if (!class_exists('\Eccube\Entity\Member')) {
                 $this->login_id,
                 $this->password,
                 $this->salt) = unserialize($serialized);
+        }
+
+        // auth_code
+        public function getAuthCode(): ?string
+        {
+            return $this->auth_code;
+        }
+
+        public function setAuthCode(?string $auth_code): self
+        {
+            $this->auth_code = $auth_code;
+            return $this;
+        }
+
+        // auth_code_expires_at
+        public function getAuthCodeExpiresAt(): ?\DateTimeInterface
+        {
+            return $this->auth_code_expires_at;
+        }
+
+        public function setAuthCodeExpiresAt(?\DateTimeInterface $auth_code_expires_at): self
+        {
+            $this->auth_code_expires_at = $auth_code_expires_at;
+            return $this;
+        }
+
+        // auth_code_try_count
+        public function getAuthCodeTryCount(): int
+        {
+            return $this->auth_code_try_count ?? 0;
+        }
+
+        public function setAuthCodeTryCount(int $auth_code_try_count): self
+        {
+            $this->auth_code_try_count = $auth_code_try_count;
+            return $this;
         }
     }
 }
